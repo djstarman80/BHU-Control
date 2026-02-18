@@ -462,11 +462,7 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
   }
 
   String _formatNumber(double number) {
-    final formatter = NumberFormat.currency(
-      locale: 'es_UY',
-      symbol: '',
-      decimalDigits: 2,
-    );
-    return formatter.format(number).replaceAll(',', '.');
+    final formatter = NumberFormat.decimalPattern('es_UY');
+    return formatter.format(number);
   }
 }
