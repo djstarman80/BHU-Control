@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:io' as io show Platform;
 import 'providers/bhu_provider.dart';
 import 'screens/bhu_home_page.dart';
@@ -65,9 +66,7 @@ class BHUControlApp extends StatelessWidget {
       ),
 
       // Tipografía
-      textTheme: base.textTheme.apply(
-        fontFamily: 'NotoSans',
-      ).copyWith(
+      textTheme: GoogleFonts.notoSansTextTheme(base.textTheme).copyWith(
         headlineLarge: base.textTheme.headlineLarge?.copyWith(
           fontWeight: FontWeight.bold,
         ),
