@@ -266,7 +266,7 @@ class _DepositoFormWidgetState extends State<DepositoFormWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                'UI actualizada: ${provider.monedaData.ui.toStringAsFixed(4)}'),
+                'UI actualizada: ${CurrencyFormatter.format(provider.monedaData.ui, 'UI')}'),
             backgroundColor: Colors.green,
           ),
         );

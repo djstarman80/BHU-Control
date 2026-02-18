@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
+import '../utils/currency_formatter.dart';
 
 class EditDepositDialog extends StatefulWidget {
   final Deposito deposito;
@@ -226,7 +227,7 @@ class _EditDepositDialogState extends State<EditDepositDialog> {
     final provider = context.read<BHUProvider>();
     setState(() {
       _uiValueController.text =
-          provider.monedaData.ui.toStringAsFixed(4).replaceAll('.', ',');
+          CurrencyFormatter.format(provider.monedaData.ui, 'UI');
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
