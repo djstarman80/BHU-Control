@@ -1,8 +1,8 @@
 # Script de Despliegue Automático para BHU Control Web
 
- = "C:\Users\Usuario\OneDrive\Projectos\bhu_control_app"
- = "C:\Users\Usuario\OneDrive\Projectos\BHU\test\BHU-Control"
- = "https://github.com/djstarman80/BHU-Control.git"
+ -ne 0)"C:\Users\Usuario\OneDrive\Projectos\bhu_control_app"
+ -ne 0)"C:\Users\Usuario\OneDrive\Projectos\BHU\test\BHU-Control"
+ -ne 0)"https://github.com/djstarman80/BHU-Control.git"
 
 Write-Host "?? Iniciando proceso de despliegue..." -ForegroundColor Cyan
 
@@ -42,9 +42,10 @@ Copy-Item -Path "\build\web\*" -Destination  -Recurse -Force
 # 3. Subir a GitHub
 Write-Host "?? Subiendo cambios a GitHub Pages..." -ForegroundColor Yellow
 & git add .
- = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+ -ne 0)Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 & git commit -m "Update web deployment: "
 & git push origin gh-pages --force
 
 Write-Host "? ¡Despliegue completado con éxito!" -ForegroundColor Green
 Write-Host "?? URL: https://djstarman80.github.io/BHU-Control/" -ForegroundColor Blue
+

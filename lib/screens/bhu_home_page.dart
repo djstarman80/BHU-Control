@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/bhu_provider.dart';
 import '../widgets/resumen_tab_widget.dart';
 import '../widgets/depositos_list_tab_widget.dart';
 import '../widgets/nuevo_deposito_tab_widget.dart';
 import '../widgets/conversor_tab_widget.dart';
+import '../dialogs/welcome_dialog.dart';
 import 'settings_screen.dart';
 
 class BHUHomePage extends StatefulWidget {
@@ -25,6 +27,7 @@ class _BHUHomePageState extends State<BHUHomePage>
     _tabController = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BHUProvider>().initialize();
+      WelcomeDialog.showIfEnabled(context);
     });
   }
 
@@ -61,6 +64,16 @@ class _BHUHomePageState extends State<BHUHomePage>
       foregroundColor: Colors.white,
       elevation: 4,
       actions: [
+        IconButton(
+          icon: const Icon(Icons.file_download),
+          onPressed: () => _importJson(context),
+          tooltip: 'Importar datos',
+        ),
+        IconButton(
+          icon: const Icon(Icons.file_upload),
+          onPressed: () => _exportJson(context),
+          tooltip: 'Exportar datos',
+        ),
         Consumer<BHUProvider>(
           builder: (context, provider, child) {
             return IconButton(
@@ -120,6 +133,94 @@ class _BHUHomePageState extends State<BHUHomePage>
         ],
       ),
     );
+  }
+
+  void _importJson(BuildContext context) async {
+    final provider = context.read<BHUProvider>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Importando datos...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final success = await provider.importFromJson();
+      Navigator.of(context).pop();
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Datos importados correctamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ No se pudo importar los datos'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _exportJson(BuildContext context) async {
+    final provider = context.read<BHUProvider>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Exportando datos...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final file = await provider.createBackup();
+      Navigator.of(context).pop();
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text:
+            'BHU Control - Backup ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+      );
+    } catch (e) {
+      Navigator.of(context).pop();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error exportando: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildNavIcon(IconData icon, int index, String tooltip) {

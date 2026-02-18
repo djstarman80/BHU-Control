@@ -1,4 +1,7 @@
 class AppConfig {
+  // CORS Proxy para Web
+  static const String corsProxy = 'https://mi-cors-proxy.bhu-cors-proxy.workers.dev';
+
   // Valores monetarios por defecto
   static const double defaultUiValue = 6.4296;
   static const double defaultUrValue = 1847.96;
@@ -13,9 +16,9 @@ class AppConfig {
   static const String bcuApiUrl =
       'https://cotizaciones.bcu.gub.uy/wscotizaciones/servlet/awsbcucotizaciones';
   static const String dolarApiUrl =
-      'https://uy.dolarapi.com/v1/cotizaciones/ui';
+      '$corsProxy/?url=https://uy.dolarapi.com/v1/cotizaciones/ui';
   static const String dolarVentaApiUrl =
-      'https://uy.dolarapi.com/v1/cotizaciones/usd';
+      '$corsProxy/?url=https://uy.dolarapi.com/v1/cotizaciones/usd';
   static const String brouCotizacionesUrl =
       'https://www.brou.com.uy/c/portal/render_portlet?p_l_id=20593&p_p_id=cotizacionfull_WAR_broutmfportlet_INSTANCE_otHfewh1klyS';
 

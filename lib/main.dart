@@ -6,16 +6,15 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io' as io show Platform;
 import 'providers/bhu_provider.dart';
 import 'screens/bhu_home_page.dart';
-import 'dialogs/welcome_dialog.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   if (!kIsWeb && io.Platform.isWindows) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
-  
+
   runApp(const BHUControlApp());
 }
 
@@ -34,14 +33,7 @@ class BHUControlApp extends StatelessWidget {
             theme: _buildTheme(ThemeData.light()),
             darkTheme: _buildTheme(ThemeData.dark()),
             themeMode: provider.themeMode,
-            home: Builder(
-              builder: (context) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  WelcomeDialog.showIfFirstLaunch(context);
-                });
-                return const BHUHomePage();
-              },
-            ),
+            home: const BHUHomePage(),
             builder: (context, child) {
               return ScrollConfiguration(
                 behavior: const MaterialScrollBehavior().copyWith(

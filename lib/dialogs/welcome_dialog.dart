@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WelcomeDialog extends StatelessWidget {
+class WelcomeDialog extends StatefulWidget {
   const WelcomeDialog({super.key});
 
-  static Future<void> showIfFirstLaunch(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+  static const String _prefKey = 'showWelcomeDialog';
 
-    if (isFirstLaunch && context.mounted) {
+  static Future<bool> shouldShowWelcome() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_prefKey) ?? true;
+  }
+
+  static Future<void> setShowWelcome(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefKey, value);
+  }
+
+  static Future<void> showIfEnabled(BuildContext context) async {
+    if (await shouldShowWelcome() && context.mounted) {
       await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) => const WelcomeDialog(),
       );
-      await prefs.setBool('isFirstLaunch', false);
     }
   }
+
+  @override
+  State<WelcomeDialog> createState() => _WelcomeDialogState();
+}
+
+class _WelcomeDialogState extends State<WelcomeDialog> {
+  bool _dontShowAgain = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,41 +43,61 @@ class WelcomeDialog extends StatelessWidget {
           Text('BHU Control'),
         ],
       ),
-      content: const SingleChildScrollView(
+      content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📊 Controla tus depósitos en UI (Unidad Indexada)'),
-            SizedBox(height: 8),
-            Text('💰 Calcula automáticamente el valor en pesos'),
-            SizedBox(height: 8),
-            Text('🔄 Sincroniza valores de UI, USD y UR automáticamente'),
-            SizedBox(height: 8),
-            Text('💱 Convierte entre monedas (UI, USD, UR, Pesos)'),
-            SizedBox(height: 16),
-            Text(
+            const Text('📊 Controla tus depósitos en UI (Unidad Indexada)'),
+            const SizedBox(height: 8),
+            const Text('💰 Calcula automáticamente el valor en pesos'),
+            const SizedBox(height: 8),
+            const Text('🔄 Sincroniza valores de UI, USD y UR automáticamente'),
+            const SizedBox(height: 8),
+            const Text('💱 Convierte entre monedas (UI, USD, UR, Pesos)'),
+            const SizedBox(height: 16),
+            const Text(
               '¡Gestiona tus inversiones de forma simple!',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
-            Divider(),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+            const Text(
               'Creada Por Marcelo Pereyra',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 4),
-            Text(
+            const SizedBox(height: 4),
+            const Text(
               'Soporte: lm.marcelo@gmail.com',
               style: TextStyle(color: Colors.blue),
+            ),
+            const SizedBox(height: 16),
+            const Divider(),
+            CheckboxListTile(
+              value: _dontShowAgain,
+              onChanged: (value) {
+                setState(() {
+                  _dontShowAgain = value ?? false;
+                });
+              },
+              title: const Text('No mostrar este mensaje de nuevo'),
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
             ),
           ],
         ),
       ),
       actions: [
         ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () async {
+            if (_dontShowAgain) {
+              await WelcomeDialog.setShowWelcome(false);
+            }
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2E86C1),
             foregroundColor: Colors.white,

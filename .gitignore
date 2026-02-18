@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter ephemeral files
+**/flutter/ephemeral*/
+**/ephemeral*/
+
+# Temporary files
+mi-cors-proxy/
+*.zip
+requirements.txt
+smart_deploy*.py
+smart_deploy*.bat
+smart_deploy_config.json
+script-session*.md
+*.cmd

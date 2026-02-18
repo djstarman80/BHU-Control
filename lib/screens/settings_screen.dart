@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/bhu_provider.dart';
 import '../config/app_config.dart';
+import '../dialogs/welcome_dialog.dart';
 
 class ImportProgressDialog extends StatefulWidget {
   final Function(bool success)? onComplete;
@@ -137,6 +138,10 @@ class SettingsScreen extends StatelessWidget {
             onTap: () => _exportPDF(context),
             iconColor: const Color(0xFFE53935),
           ),
+          const SizedBox(height: 24),
+          _buildSectionHeader('⚙️ PREFERENCIAS'),
+          const Divider(),
+          _buildWelcomeDialogSwitch(context),
           const SizedBox(height: 24),
           _buildSectionHeader('ℹ️ ACERCA DE'),
           const Divider(),
@@ -1039,6 +1044,72 @@ class SettingsScreen extends StatelessWidget {
             child: const Text('Cerrar'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeDialogSwitch(BuildContext context) {
+    return const _WelcomeDialogSwitch();
+  }
+}
+
+class _WelcomeDialogSwitch extends StatefulWidget {
+  const _WelcomeDialogSwitch();
+
+  @override
+  State<_WelcomeDialogSwitch> createState() => _WelcomeDialogSwitchState();
+}
+
+class _WelcomeDialogSwitchState extends State<_WelcomeDialogSwitch> {
+  bool? _showWelcome;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadValue();
+  }
+
+  Future<void> _loadValue() async {
+    final value = await WelcomeDialog.shouldShowWelcome();
+    if (mounted) {
+      setState(() {
+        _showWelcome = value;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: SwitchListTile(
+        secondary: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.waving_hand,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        title: const Text(
+          'Mostrar bienvenida al iniciar',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: const Text(
+            'Muestra el diálogo de bienvenida cada vez que se abre la app'),
+        value: _showWelcome ?? true,
+        onChanged: _showWelcome == null
+            ? null
+            : (value) async {
+                await WelcomeDialog.setShowWelcome(value);
+                setState(() {
+                  _showWelcome = value;
+                });
+              },
       ),
     );
   }
