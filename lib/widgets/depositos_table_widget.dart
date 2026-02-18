@@ -542,7 +542,7 @@ class DepositosTableWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'UI: ${deposito.uiValue.toStringAsFixed(4)}',
+                          'UI: ${CurrencyFormatter.format(deposito.uiValue, 'UI')}',
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall

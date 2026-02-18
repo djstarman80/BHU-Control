@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
+import '../utils/currency_formatter.dart';
 
 class EditDepositoDialog extends StatefulWidget {
   final Deposito deposito;
@@ -398,11 +399,10 @@ class _EditDepositoDialogState extends State<EditDepositoDialog> {
   }
 
   String _formatNumber(double number, int decimalPlaces) {
-    final formatter = NumberFormat.currency(
-      locale: 'es_UY',
-      symbol: '',
-      decimalDigits: decimalPlaces,
-    );
-    return formatter.format(number).replaceAll(',', '.');
+    if (decimalPlaces == 4) {
+      return CurrencyFormatter.format(number, 'UI');
+    } else {
+      return CurrencyFormatter.format(number, 'UYU');
+    }
   }
 }

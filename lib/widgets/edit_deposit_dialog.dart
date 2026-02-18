@@ -27,13 +27,13 @@ class _EditDepositDialogState extends State<EditDepositDialog> {
   void initState() {
     super.initState();
     _amountController = TextEditingController(
-      text: widget.deposito.amount.toStringAsFixed(2).replaceAll('.', ','),
+      text: CurrencyFormatter.format(widget.deposito.amount, 'UYU'),
     );
     _uiAmountController = TextEditingController(
-      text: widget.deposito.uiAmount.toStringAsFixed(4).replaceAll('.', ','),
+      text: CurrencyFormatter.format(widget.deposito.uiAmount, 'UI'),
     );
     _uiValueController = TextEditingController(
-      text: widget.deposito.uiValue.toStringAsFixed(4).replaceAll('.', ','),
+      text: CurrencyFormatter.format(widget.deposito.uiValue, 'UI'),
     );
     _selectedDate = _parseDate(widget.deposito.depositDate);
   }
@@ -249,7 +249,7 @@ class _EditDepositDialogState extends State<EditDepositDialog> {
       if (amount != null && uiValue != null && uiValue > 0) {
         final calculatedUI = amount / uiValue;
         _uiAmountController.text =
-            calculatedUI.toStringAsFixed(4).replaceAll('.', ',');
+            CurrencyFormatter.format(calculatedUI, 'UI');
       }
     }
   }

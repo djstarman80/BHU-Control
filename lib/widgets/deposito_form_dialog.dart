@@ -400,7 +400,7 @@ class _DepositoFormDialogState extends State<DepositoFormDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                'UI actualizada: ${updatedProvider.currentUi.value.toStringAsFixed(4)}'),
+                'UI actualizada: ${CurrencyFormatter.format(updatedProvider.currentUi.value, 'UI')}'),
             backgroundColor: Colors.green,
           ),
         );

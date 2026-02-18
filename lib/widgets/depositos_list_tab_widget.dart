@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
 import '../utils/currency_formatter.dart';
@@ -236,12 +235,6 @@ class _DepositosListTabWidgetState extends State<DepositosListTabWidget> {
     BHUProvider provider,
     List<Deposito> depositos,
   ) {
-    final currencyFormat = NumberFormat.currency(
-      locale: 'es_UY',
-      symbol: '\$',
-      decimalDigits: 2,
-    );
-
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -335,7 +328,7 @@ class _DepositosListTabWidgetState extends State<DepositosListTabWidget> {
                                 ),
                           ),
                           Text(
-                            currencyFormat.format(deposito.amount),
+                            '\$${CurrencyFormatter.format(deposito.amount, 'UYU')}',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -359,8 +352,7 @@ class _DepositosListTabWidgetState extends State<DepositosListTabWidget> {
                                 ),
                           ),
                           Text(
-                            currencyFormat.format(
-                                deposito.uiAmount * provider.monedaData.ui),
+                            '\$${CurrencyFormatter.format(deposito.uiAmount * provider.monedaData.ui, 'UYU')}',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -419,7 +411,7 @@ class _DepositosListTabWidgetState extends State<DepositosListTabWidget> {
                           ],
                         ),
                         Text(
-                          '${isProfit ? '+' : ''}${currencyFormat.format(profit)} (${isProfit ? '+' : ''}${profitPercentage.toStringAsFixed(1)}%)',
+                          '${isProfit ? '+' : ''}\$${CurrencyFormatter.format(profit, 'UYU')} (${isProfit ? '+' : ''}${profitPercentage.toStringAsFixed(1)}%)',
                           style: TextStyle(
                             color: isProfit ? Colors.green : Colors.red,
                             fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../providers/bhu_provider.dart';
+import '../utils/currency_formatter.dart';
 
 class ConversionDialog extends StatefulWidget {
   const ConversionDialog({super.key});
@@ -222,9 +223,6 @@ class _ConversionDialogState extends State<ConversionDialog> {
   }
 
   String _formatNumber(double number) {
-    if (number == number.toInt()) {
-      return number.toInt().toString();
-    }
-    return number.toStringAsFixed(2).replaceAll('.', ',');
+    return CurrencyFormatter.format(number, 'UYU');
   }
 }
