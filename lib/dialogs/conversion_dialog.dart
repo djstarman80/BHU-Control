@@ -107,7 +107,7 @@ class _ConversionDialogState extends State<ConversionDialog> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _toMoneda)}',
+                    '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _fromMoneda)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -212,7 +212,7 @@ class _ConversionDialogState extends State<ConversionDialog> {
   }
 
   void _copiarResultado() {
-    final texto = '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _toMoneda)}';
+    final texto = '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _fromMoneda)}';
     Clipboard.setData(ClipboardData(text: texto));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -222,7 +222,12 @@ class _ConversionDialogState extends State<ConversionDialog> {
     );
   }
 
-  String _formatNumber(double number, String moneda) {
-    return CurrencyFormatter.format(number, moneda);
+  String _formatNumber(double number, String fromMoneda) {
+    // Si el origen es UI, mantener 4 decimales en el resultado
+    if (fromMoneda == 'UI') {
+      return CurrencyFormatter.format(number, 'UI');
+    }
+    // Para otros orígenes, usar el formato de UYU con 2 decimales
+    return CurrencyFormatter.format(number, 'UYU');
   }
 }

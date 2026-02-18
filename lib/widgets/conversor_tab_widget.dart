@@ -361,7 +361,7 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${_monedaSimbolos[_toMoneda]} ${_formatNumber(_resultado, _toMoneda)}',
+                    '${_monedaSimbolos[_toMoneda]} ${_formatNumber(_resultado, _fromMoneda)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -461,7 +461,12 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
     );
   }
 
-  String _formatNumber(double number, String moneda) {
-    return CurrencyFormatter.format(number, moneda);
+  String _formatNumber(double number, String fromMoneda) {
+    // Si el origen es UI, mantener 4 decimales en el resultado
+    if (fromMoneda == 'UI') {
+      return CurrencyFormatter.format(number, 'UI');
+    }
+    // Para otros orígenes, usar el formato de UYU con 2 decimales
+    return CurrencyFormatter.format(number, 'UYU');
   }
 }
