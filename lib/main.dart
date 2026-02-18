@@ -65,7 +65,9 @@ class BHUControlApp extends StatelessWidget {
       ),
 
       // Tipografía
-      textTheme: base.textTheme.copyWith(
+      textTheme: base.textTheme.apply(
+        fontFamily: 'NotoSans',
+      ).copyWith(
         headlineLarge: base.textTheme.headlineLarge?.copyWith(
           fontWeight: FontWeight.bold,
         ),
