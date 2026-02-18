@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
+import 'currency_formatter.dart';
+import 'date_formatter.dart';
 
 class PDFGenerator {
   static Future<io.File> generateResumenPDF({
