@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
 import '../dialogs/edit_deposito_dialog.dart';
+import '../utils/currency_formatter.dart';
 
 class DepositosTableWidget extends StatelessWidget {
   final String searchQuery;
@@ -637,6 +638,10 @@ class DepositosTableWidget extends StatelessWidget {
   }
 
   String _formatNumber(double number, int decimalPlaces) {
-    return number.toStringAsFixed(decimalPlaces).replaceAll('.', ',');
+    if (decimalPlaces == 4) {
+      return CurrencyFormatter.format(number, 'UI');
+    } else {
+      return CurrencyFormatter.format(number, 'UYU');
+    }
   }
 }

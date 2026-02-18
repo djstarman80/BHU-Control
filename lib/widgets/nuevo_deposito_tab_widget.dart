@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
+import '../utils/currency_formatter.dart';
 
 class NuevoDepositoTabWidget extends StatefulWidget {
   const NuevoDepositoTabWidget({super.key});
@@ -519,6 +520,10 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
   }
 
   String _formatNumber(double number, int decimalPlaces) {
-    return number.toStringAsFixed(decimalPlaces).replaceAll('.', ',');
+    if (decimalPlaces == 4) {
+      return CurrencyFormatter.format(number, 'UI');
+    } else {
+      return CurrencyFormatter.format(number, 'UYU');
+    }
   }
 }

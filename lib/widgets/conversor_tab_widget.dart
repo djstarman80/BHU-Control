@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../dialogs/conversion_dialog.dart';
+import '../utils/currency_formatter.dart';
 
 class ConversorTabWidget extends StatefulWidget {
   const ConversorTabWidget({super.key});
@@ -462,7 +462,6 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
   }
 
   String _formatNumber(double number) {
-    final formatter = NumberFormat.decimalPattern('es_UY');
-    return formatter.format(number);
+    return CurrencyFormatter.format(number, 'UYU');
   }
 }

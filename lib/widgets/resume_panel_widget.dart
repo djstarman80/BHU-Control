@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
+import '../utils/currency_formatter.dart';
 
 class ResumePanelWidget extends StatelessWidget {
   const ResumePanelWidget({super.key});
@@ -405,7 +406,11 @@ class ResumePanelWidget extends StatelessWidget {
   }
 
   String _formatNumber(double number, int decimalPlaces) {
-    return number.toStringAsFixed(decimalPlaces).replaceAll('.', ',');
+    if (decimalPlaces == 4) {
+      return CurrencyFormatter.format(number, 'UI');
+    } else {
+      return CurrencyFormatter.format(number, 'UYU');
+    }
   }
 
   String _getProfitPercentage(double totalAmount, double profit) {

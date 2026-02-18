@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import '../utils/currency_formatter.dart';
 
 class MonedaData {
   final double ui;
@@ -25,9 +25,9 @@ class MonedaData {
     this.dolarLastUpdate = '',
   });
 
-  String get formattedUi => ui.toStringAsFixed(4).replaceAll('.', ',');
-  String get formattedUr => _formatNumber(ur);
-  String get formattedDolar => _formatNumber(dolarVenta);
+  String get formattedUi => CurrencyFormatter.format(ui, 'UI');
+  String get formattedUr => CurrencyFormatter.format(ur, 'UR');
+  String get formattedDolar => CurrencyFormatter.format(dolarVenta, 'USD');
 
   String get formattedLastUpdate {
     final months = [
@@ -45,10 +45,6 @@ class MonedaData {
       'diciembre'
     ];
     return '${ultimaActualizacion.day} ${months[ultimaActualizacion.month - 1]} ${ultimaActualizacion.year}';
-  }
-
-  String _formatNumber(double number) {
-    return number.toStringAsFixed(2).replaceAll('.', ',');
   }
 
   String get fuente => uiSource;
