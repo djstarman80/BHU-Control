@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
 import '../utils/currency_formatter.dart';
+import '../utils/date_formatter.dart';
 
 class NuevoDepositoTabWidget extends StatefulWidget {
   const NuevoDepositoTabWidget({super.key});
@@ -213,7 +214,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                   border: OutlineInputBorder(),
                 ),
                 child: Text(
-                  DateFormat('dd-MM-yyyy').format(_selectedDate),
+                  DateFormatter.formatDisplay(_selectedDate),
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
@@ -420,7 +421,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
         id: DateTime.now().millisecondsSinceEpoch,
         amount: double.parse(_amountController.text.replaceAll(',', '.')),
         uiAmount: double.parse(_uiAmountController.text.replaceAll(',', '.')),
-        depositDate: DateFormat('dd-MM-yyyy').format(_selectedDate),
+        depositDate: DateFormatter.formatDisplay(_selectedDate),
         uiValue: double.parse(_uiValueController.text.replaceAll(',', '.')),
         registrationDate: DateTime.now().toIso8601String(),
       );

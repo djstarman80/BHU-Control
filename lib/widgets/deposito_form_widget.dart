@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
 import '../utils/currency_formatter.dart';
+import '../utils/date_formatter.dart';
 
 class DepositoFormWidget extends StatefulWidget {
   const DepositoFormWidget({super.key});
@@ -132,7 +132,7 @@ class _DepositoFormWidgetState extends State<DepositoFormWidget> {
                     border: OutlineInputBorder(),
                   ),
                   child: Text(
-                    DateFormat('dd-MM-yyyy').format(_selectedDate),
+                    DateFormatter.formatDisplay(_selectedDate),
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -316,7 +316,7 @@ class _DepositoFormWidgetState extends State<DepositoFormWidget> {
         id: DateTime.now().millisecondsSinceEpoch, // ID temporal
         amount: double.parse(_amountController.text.replaceAll(',', '.')),
         uiAmount: double.parse(_uiAmountController.text.replaceAll(',', '.')),
-        depositDate: DateFormat('dd-MM-yyyy').format(_selectedDate),
+        depositDate: DateFormatter.formatDisplay(_selectedDate),
         uiValue: double.parse(_uiValueController.text.replaceAll(',', '.')),
         registrationDate: DateTime.now().toIso8601String(),
       );

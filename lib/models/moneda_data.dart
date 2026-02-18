@@ -1,4 +1,5 @@
 import '../utils/currency_formatter.dart';
+import '../utils/date_formatter.dart';
 
 class MonedaData {
   final double ui;
@@ -28,24 +29,7 @@ class MonedaData {
   String get formattedUi => CurrencyFormatter.format(ui, 'UI');
   String get formattedUr => CurrencyFormatter.format(ur, 'UR');
   String get formattedDolar => CurrencyFormatter.format(dolarVenta, 'USD');
-
-  String get formattedLastUpdate {
-    final months = [
-      'enero',
-      'febrero',
-      'marzo',
-      'abril',
-      'mayo',
-      'junio',
-      'julio',
-      'agosto',
-      'setiembre',
-      'octubre',
-      'noviembre',
-      'diciembre'
-    ];
-    return '${ultimaActualizacion.day} ${months[ultimaActualizacion.month - 1]} ${ultimaActualizacion.year}';
-  }
+  String get formattedLastUpdate => DateFormatter.formatLastUpdate(ultimaActualizacion);
 
   String get fuente => uiSource;
 }

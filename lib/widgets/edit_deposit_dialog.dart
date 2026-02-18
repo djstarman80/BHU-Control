@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../models/deposito.dart';
 import '../utils/currency_formatter.dart';
+import '../utils/date_formatter.dart';
 
 class EditDepositDialog extends StatefulWidget {
   final Deposito deposito;
@@ -131,7 +132,7 @@ class _EditDepositDialogState extends State<EditDepositDialog> {
                     border: OutlineInputBorder(),
                   ),
                   child: Text(
-                    DateFormat('dd-MM-yyyy').format(_selectedDate),
+                    DateFormatter.formatDisplay(_selectedDate),
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -269,7 +270,7 @@ class _EditDepositDialogState extends State<EditDepositDialog> {
         id: widget.deposito.id,
         amount: double.parse(_amountController.text.replaceAll(',', '.')),
         uiAmount: double.parse(_uiAmountController.text.replaceAll(',', '.')),
-        depositDate: DateFormat('dd-MM-yyyy').format(_selectedDate),
+        depositDate: DateFormatter.formatDisplay(_selectedDate),
         uiValue: double.parse(_uiValueController.text.replaceAll(',', '.')),
         registrationDate: widget.deposito.registrationDate,
       );

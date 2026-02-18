@@ -5,6 +5,7 @@ import '../services/database_service.dart';
 import '../services/ur_service.dart';
 import '../models/moneda_data.dart';
 import '../utils/logger.dart';
+import '../utils/date_formatter.dart';
 import '../config/app_config.dart';
 
 class UiService {
@@ -395,8 +396,5 @@ class UiData {
 
   DateTime get lastUpdateDateTime => DateTime.parse(lastUpdate);
 
-  String get formattedLastUpdate {
-    final date = lastUpdateDateTime;
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(4, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
+  String get formattedLastUpdate => DateFormatter.formatDateTime(lastUpdateDateTime);
 }
