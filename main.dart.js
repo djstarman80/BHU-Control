@@ -30060,7 +30060,7 @@ return null}catch(p){return null}},
 ap3(){var s=0,r=A.G(t.i),q,p=2,o=[],n,m,l,k,j,i,h,g,f,e,d,c,b
 var $async$ap3=A.H(function(a,a0){if(a===1){o.push(a0)
 s=p}for(;;)A:switch(s){case 0:p=4
-n="https://api.allorigins.win/raw?url="+A.Kf(2,"https://datosuruguay.com/ur",B.ae,!1)
+n="https://corsproxy.io/?"+A.Kf(2,"https://datosuruguay.com/ur",B.ae,!1)
 A.k(n)
 f=t.N
 s=7
