@@ -4,7 +4,7 @@ class CurrencyFormatter {
       case 'UI':
         return _formatUI(value);
       case 'UR':
-        return _formatWithThousands(value, 2);
+        return _formatUR(value);
       case 'USD':
         return _formatUSD(value);
       case 'UYU':
@@ -19,11 +19,15 @@ class CurrencyFormatter {
   }
 
   static String _formatUSD(double value) {
-    return value.toStringAsFixed(2).replaceAll('.', ',');
+    return _formatWithThousands(value, 2);
+  }
+
+  static String _formatUR(double value) {
+    return _formatWithThousands(value, 2);
   }
 
   static String _formatUYU(double value) {
-    return _formatWithThousands(value, 0);
+    return _formatWithThousands(value, 2);
   }
 
   static String _formatWithThousands(double value, int decimals) {
