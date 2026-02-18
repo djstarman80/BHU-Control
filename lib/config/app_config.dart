@@ -1,5 +1,5 @@
 class AppConfig {
-  // CORS Proxy para Web
+  // CORS Proxy para Web (solo para UR y BROU)
   static const String corsProxy = 'https://mi-cors-proxy.bhu-cors-proxy.workers.dev';
 
   // Valores monetarios por defecto
@@ -12,15 +12,17 @@ class AppConfig {
   static const Duration bcuFallbackTimeout = Duration(seconds: 4);
   static const Duration dbTimeout = Duration(seconds: 30);
 
-  // URLs de APIs
+  // URLs de APIs (sin proxy - DolarApi no necesita)
   static const String bcuApiUrl =
       'https://cotizaciones.bcu.gub.uy/wscotizaciones/servlet/awsbcucotizaciones';
   static const String dolarApiUrl =
-      '$corsProxy/?url=https://uy.dolarapi.com/v1/cotizaciones/ui';
+      'https://uy.dolarapi.com/v1/cotizaciones/ui';
   static const String dolarVentaApiUrl =
-      '$corsProxy/?url=https://uy.dolarapi.com/v1/cotizaciones/usd';
+      'https://uy.dolarapi.com/v1/cotizaciones/usd';
   static const String brouCotizacionesUrl =
       'https://www.brou.com.uy/c/portal/render_portlet?p_l_id=20593&p_p_id=cotizacionfull_WAR_broutmfportlet_INSTANCE_otHfewh1klyS';
+  static const String datosUruguayUrl =
+      'https://datosuruguay.com/ur';
 
   // Base de datos
   static const String dbName = 'bhu_control.db';

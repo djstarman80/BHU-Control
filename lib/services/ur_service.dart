@@ -6,8 +6,6 @@ import '../config/app_config.dart';
 import '../utils/logger.dart';
 
 class UrService {
-  static const String _baseUrlDatosUruguay = 'https://datosuruguay.com';
-
   static double? _parsePrice(String? value) {
     if (value == null) return null;
     try {
@@ -43,8 +41,8 @@ class UrService {
   static Future<double> getUrValue() async {
     try {
       final url = kIsWeb 
-          ? 'https://api.allorigins.win/raw?url=${Uri.encodeComponent('https://datosuruguay.com/ur')}'
-          : '$_baseUrlDatosUruguay/ur';
+          ? '${AppConfig.corsProxy}/?url=${AppConfig.datosUruguayUrl}'
+          : AppConfig.datosUruguayUrl;
           
       AppLogger.i('Obteniendo valor UR desde: $url');
       final response = await http.get(
