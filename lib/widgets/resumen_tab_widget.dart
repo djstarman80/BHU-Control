@@ -94,11 +94,7 @@ class ResumenTabWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        NumberFormat.currency(
-                          locale: 'es_UY',
-                          symbol: '',
-                          decimalDigits: 4,
-                        ).format(provider.monedaData.ui).replaceAll(',', '.'),
+                        provider.monedaData.ui.toStringAsFixed(4).replaceAll('.', ','),
                         style: const TextStyle(
                           color: Colors.amber,
                           fontSize: 24,

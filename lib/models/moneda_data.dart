@@ -48,12 +48,7 @@ class MonedaData {
   }
 
   String _formatNumber(double number) {
-    final formatter = NumberFormat.currency(
-      locale: 'es_UY',
-      symbol: '',
-      decimalDigits: 2,
-    );
-    return formatter.format(number).replaceAll(',', '.');
+    return number.toStringAsFixed(2).replaceAll('.', ',');
   }
 
   String get fuente => uiSource;

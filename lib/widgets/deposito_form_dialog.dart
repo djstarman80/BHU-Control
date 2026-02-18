@@ -542,11 +542,6 @@ class _DepositoFormDialogState extends State<DepositoFormDialog> {
   }
 
   String _formatNumber(double number, int decimalPlaces) {
-    final formatter = NumberFormat.currency(
-      locale: 'es_UY',
-      symbol: '',
-      decimalDigits: decimalPlaces,
-    );
-    return formatter.format(number).replaceAll(',', '.');
+    return number.toStringAsFixed(decimalPlaces).replaceAll('.', ',');
   }
 }
