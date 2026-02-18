@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../providers/bhu_provider.dart';
 import '../dialogs/conversion_dialog.dart';
 
@@ -461,15 +462,11 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
   }
 
   String _formatNumber(double number) {
-    if (number == 0) {
-      return '0';
-    }
-    if (number.abs() < 0.01) {
-      return number.toStringAsFixed(6).replaceAll('.', ',');
-    }
-    if (number == number.toInt()) {
-      return number.toInt().toString();
-    }
-    return number.toStringAsFixed(4).replaceAll('.', ',');
+    final formatter = NumberFormat.currency(
+      locale: 'es_UY',
+      symbol: '',
+      decimalDigits: 2,
+    );
+    return formatter.format(number).replaceAll(',', '.');
   }
 }
