@@ -171,7 +171,7 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
                   context,
                   'USD',
                   '\$',
-                  '${_formatNumber(monedaData.dolarVenta)}',
+                  monedaData.formattedDolar,
                   const Color(0xFF4CAF50),
                   monedaData.dolarSource,
                 ),
@@ -361,7 +361,7 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${_monedaSimbolos[_toMoneda]} ${_formatNumber(_resultado)}',
+                    '${_monedaSimbolos[_toMoneda]} ${_formatNumber(_resultado, _toMoneda)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -461,7 +461,7 @@ class _ConversorTabWidgetState extends State<ConversorTabWidget> {
     );
   }
 
-  String _formatNumber(double number) {
-    return CurrencyFormatter.format(number, 'UYU');
+  String _formatNumber(double number, String moneda) {
+    return CurrencyFormatter.format(number, moneda);
   }
 }

@@ -107,7 +107,7 @@ class _ConversionDialogState extends State<ConversionDialog> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado)}',
+                    '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _toMoneda)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -212,7 +212,7 @@ class _ConversionDialogState extends State<ConversionDialog> {
   }
 
   void _copiarResultado() {
-    final texto = '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado)}';
+    final texto = '${_getMoneda(_toMoneda)['symbol']} ${_formatNumber(_resultado, _toMoneda)}';
     Clipboard.setData(ClipboardData(text: texto));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -222,7 +222,7 @@ class _ConversionDialogState extends State<ConversionDialog> {
     );
   }
 
-  String _formatNumber(double number) {
-    return CurrencyFormatter.format(number, 'UYU');
+  String _formatNumber(double number, String moneda) {
+    return CurrencyFormatter.format(number, moneda);
   }
 }
