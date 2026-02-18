@@ -279,7 +279,10 @@ class UiService {
           ? 'WEB'
           : 'MANUAL';
       final urSource =
-          (urSourceRaw.contains('BCU') || urSourceRaw.contains('API'))
+          (urSourceRaw.contains('BCU') || 
+           urSourceRaw.contains('API') ||
+           urSourceRaw.contains('WEB') ||
+           urSourceRaw.contains('Proxy'))
               ? 'WEB'
               : 'MANUAL';
 
