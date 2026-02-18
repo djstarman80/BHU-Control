@@ -49,9 +49,6 @@ dependencies:
 
   # Logging
   logger: ^2.0.2
-  
-  # Google Fonts
-  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
