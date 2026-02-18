@@ -25,7 +25,7 @@ class MonedaData {
     this.dolarLastUpdate = '',
   });
 
-  String get formattedUi => ui.toStringAsFixed(4);
+  String get formattedUi => ui.toStringAsFixed(4).replaceAll('.', ',');
   String get formattedUr => _formatNumber(ur);
   String get formattedDolar => _formatNumber(dolarVenta);
 
