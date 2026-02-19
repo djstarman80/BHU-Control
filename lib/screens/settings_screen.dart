@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_saver/file_saver.dart';
 import '../providers/bhu_provider.dart';
 import '../config/app_config.dart';
 import '../dialogs/welcome_dialog.dart';
@@ -965,26 +967,41 @@ class SettingsScreen extends StatelessWidget {
     try {
       print('DEBUG SETTINGS - Obteniendo provider...');
       final provider = context.read<BHUProvider>();
-      print('DEBUG SETTINGS - Llamando generatePDF()...');
-      final file = await provider.generatePDF();
+      
+      if (kIsWeb) {
+        print('DEBUG SETTINGS - Modo Web: generando bytes...');
+        final bytes = await provider.generatePDFBytes();
+        Navigator.of(context).pop();
+        
+        await FileSaver.instance.saveFile(
+          name: 'bhu_resumen_${DateTime.now().millisecondsSinceEpoch}',
+          bytes: bytes,
+          ext: 'pdf',
+          mimeType: MimeType.pdf,
+        );
+        print('DEBUG SETTINGS - PDF descargado en web');
+      } else {
+        print('DEBUG SETTINGS - Modo Desktop/Mobile: generando archivo...');
+        final file = await provider.generatePDF();
 
-      print('DEBUG SETTINGS - PDF recibido: ${file.path}');
-      Navigator.of(context).pop();
+        print('DEBUG SETTINGS - PDF recibido: ${file.path}');
+        Navigator.of(context).pop();
 
-      print('DEBUG SETTINGS - Compartiendo PDF...');
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text:
-            'Resumen BHU - ${DateTime.now().day} de ${_getMonthName(DateTime.now().month)} de ${DateTime.now().year}',
-      );
-      print('DEBUG SETTINGS - Share completado');
+        print('DEBUG SETTINGS - Compartiendo PDF...');
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text:
+              'Resumen BHU - ${DateTime.now().day} de ${_getMonthName(DateTime.now().month)} de ${DateTime.now().year}',
+        );
+        print('DEBUG SETTINGS - Share completado');
+      }
     } catch (e) {
       print('DEBUG SETTINGS - ERROR: $e');
       print('DEBUG SETTINGS - Stack trace: ${StackTrace.current}');
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ Error generando PDF: $e'),
+          content: Text('Error generando PDF: $e'),
           backgroundColor: Colors.red,
         ),
       );

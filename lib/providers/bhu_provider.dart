@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
+import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/deposito.dart';
 import '../models/moneda_data.dart';
@@ -461,7 +462,15 @@ class BHUProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Generar PDF de resumen
+  // Generar PDF de resumen (bytes para web y desktop)
+  Future<Uint8List> generatePDFBytes() async {
+    AppLogger.i('Generando PDF de resumen (bytes)');
+    final bytes = await PDFGenerator.generateResumenPDFBytes(provider: this);
+    AppLogger.i('PDF generado en memoria: ${bytes.length} bytes');
+    return bytes;
+  }
+
+  // Generar PDF de resumen (archivo - solo desktop/mobile)
   Future<io.File> generatePDF() async {
     AppLogger.i('Generando PDF de resumen');
 

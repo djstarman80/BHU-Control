@@ -1,4 +1,5 @@
 import 'dart:io' as io;
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -10,14 +11,10 @@ import 'currency_formatter.dart';
 import 'date_formatter.dart';
 
 class PDFGenerator {
-  static Future<io.File> generateResumenPDF({
+  static Future<Uint8List> generateResumenPDFBytes({
     required BHUProvider provider,
   }) async {
-    if (kIsWeb) throw UnsupportedError('PDF generation using File is not supported on web');
-    print('DEBUG PDFGEN - Iniciando generación de PDF');
-    print(
-      'DEBUG PDFGEN - Provider depositos count: ${provider.depositos.length}',
-    );
+    print('DEBUG PDFGEN - Iniciando generación de PDF bytes');
 
     initializeDateFormatting('es_ES', null);
 
@@ -56,12 +53,23 @@ class PDFGenerator {
       ),
     );
 
-    print('DEBUG PDFGEN - Guardando PDF...');
+    print('DEBUG PDFGEN - Guardando PDF en memoria...');
+    final bytes = await pdf.save();
+    print('DEBUG PDFGEN - PDF tamaño en memoria: ${bytes.length} bytes');
+    return bytes;
+  }
+
+  static Future<io.File> generateResumenPDF({
+    required BHUProvider provider,
+  }) async {
+    if (kIsWeb) throw UnsupportedError('PDF generation using File is not supported on web');
+    
+    final bytes = await generateResumenPDFBytes(provider: provider);
+    
+    print('DEBUG PDFGEN - Guardando PDF en archivo...');
     final file = io.File(
       '${(await io.Directory.systemTemp.createTemp()).path}/bhu_resumen_${DateTime.now().millisecondsSinceEpoch}.pdf',
     );
-    final bytes = await pdf.save();
-    print('DEBUG PDFGEN - PDF tamaño en memoria: ${bytes.length} bytes');
     await file.writeAsBytes(bytes);
     print('DEBUG PDFGEN - PDF guardado en: ${file.path}');
     return file;

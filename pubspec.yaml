@@ -41,6 +41,7 @@ dependencies:
 
   # PDF
   pdf: ^3.10.4
+  file_saver: ^0.2.14
   
   # Permisos y archivos
   permission_handler: ^11.0.0
