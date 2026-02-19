@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -968,26 +969,23 @@ class SettingsScreen extends StatelessWidget {
       print('DEBUG SETTINGS - Obteniendo provider...');
       final provider = context.read<BHUProvider>();
       
-      if (kIsWeb) {
-        print('DEBUG SETTINGS - Modo Web: generando bytes...');
-        final bytes = await provider.generatePDFBytes();
-        Navigator.of(context).pop();
-        
+      final bytes = await provider.generatePDFBytes();
+      final fileName = 'bhu_resumen_${DateTime.now().millisecondsSinceEpoch}';
+      
+      Navigator.of(context).pop();
+      
+      if (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        print('DEBUG SETTINGS - Modo Web/Desktop: guardando archivo...');
         await FileSaver.instance.saveFile(
-          name: 'bhu_resumen_${DateTime.now().millisecondsSinceEpoch}',
+          name: fileName,
           bytes: bytes,
           ext: 'pdf',
           mimeType: MimeType.pdf,
         );
-        print('DEBUG SETTINGS - PDF descargado en web');
+        print('DEBUG SETTINGS - PDF guardado');
       } else {
-        print('DEBUG SETTINGS - Modo Desktop/Mobile: generando archivo...');
+        print('DEBUG SETTINGS - Modo Mobile: compartiendo...');
         final file = await provider.generatePDF();
-
-        print('DEBUG SETTINGS - PDF recibido: ${file.path}');
-        Navigator.of(context).pop();
-
-        print('DEBUG SETTINGS - Compartiendo PDF...');
         await Share.shareXFiles(
           [XFile(file.path)],
           text:
