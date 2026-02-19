@@ -50,10 +50,27 @@ app.*.map.json
 
 # Temporary files
 mi-cors-proxy/
-*.zip
-requirements.txt
-smart_deploy*.py
-smart_deploy*.bat
-smart_deploy_config.json
 script-session*.md
+
+# Backup folders and files
+Fuente/
+backups/
+*.zip
+*.backup
+
+# Scripts locales (build, deploy, backup)
+*.bat
 *.cmd
+*.ps1
+smart_deploy*.py
+smart_deploy_config.json
+smart_fuente_creator.py
+crear_fuente_*.bat
+
+# Development notes
+CAMBIOS*.md
+SCRIPTS.md
+
+# Build artifacts
+android/build/
+build/
