@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -10,6 +9,8 @@ import '../providers/bhu_provider.dart';
 import 'package:file_saver/file_saver.dart';
 import '../config/app_config.dart';
 import '../dialogs/welcome_dialog.dart';
+import '../utils/web_download_helper_stub.dart'
+    if (dart.library.html) '../utils/web_download_helper.dart';
 
 class ImportProgressDialog extends StatefulWidget {
   final Function(bool success)? onComplete;
@@ -935,12 +936,7 @@ class SettingsScreen extends StatelessWidget {
         final timestamp = DateTime.now().toIso8601String().split('T')[0];
         final fileName = 'bhu_backup_$timestamp.json';
 
-        final blob = html.Blob([jsonString], 'application/json');
-        final url = html.Url.createObjectUrlFromBlob(blob);
-        final anchor = html.AnchorElement(href: url)
-          ..setAttribute('download', fileName)
-          ..click();
-        html.Url.revokeObjectUrl(url);
+        WebDownloadHelper.downloadJson(jsonString, fileName);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
