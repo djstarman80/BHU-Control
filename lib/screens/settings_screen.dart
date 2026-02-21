@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:file_saver/file_saver.dart';
 import '../providers/bhu_provider.dart';
+import 'package:file_saver/file_saver.dart';
 import '../config/app_config.dart';
 import '../dialogs/welcome_dialog.dart';
 
@@ -926,6 +927,32 @@ class SettingsScreen extends StatelessWidget {
 
     try {
       final provider = context.read<BHUProvider>();
+
+      if (kIsWeb) {
+        final jsonString = await provider.createBackupWeb();
+        Navigator.of(context).pop();
+
+        final timestamp = DateTime.now().toIso8601String().split('T')[0];
+        final fileName = 'bhu_backup_$timestamp.json';
+
+        final blob = html.Blob([jsonString], 'application/json');
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute('download', fileName)
+          ..click();
+        html.Url.revokeObjectUrl(url);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Backup descargado: $fileName'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        return;
+      }
+
       final file = await provider.createBackup();
 
       Navigator.of(context).pop();
@@ -966,15 +993,20 @@ class SettingsScreen extends StatelessWidget {
     );
 
     try {
+      print('DEBUG: kIsWeb=$kIsWeb, Platform.isWindows=${Platform.isWindows}');
       print('DEBUG SETTINGS - Obteniendo provider...');
       final provider = context.read<BHUProvider>();
-      
+
       final bytes = await provider.generatePDFBytes();
       final fileName = 'bhu_resumen_${DateTime.now().millisecondsSinceEpoch}';
-      
+
       Navigator.of(context).pop();
-      
-      if (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+
+      if (kIsWeb ||
+          Platform.isWindows ||
+          Platform.isLinux ||
+          Platform.isMacOS) {
+        print('DEBUG: Usando FileSaver (web/desktop)');
         print('DEBUG SETTINGS - Modo Web/Desktop: guardando archivo...');
         await FileSaver.instance.saveFile(
           name: fileName,

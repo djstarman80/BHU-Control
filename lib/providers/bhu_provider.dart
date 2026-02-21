@@ -520,6 +520,14 @@ class BHUProvider extends ChangeNotifier {
     return file;
   }
 
+  // Crear backup para web (GitHub Pages)
+  Future<String> createBackupWeb() async {
+    AppLogger.i('Creando backup web');
+    final jsonString = await _dbService.createBackupWeb();
+    AppLogger.i('Backup web generado');
+    return jsonString;
+  }
+
   // ===== MÉTODOS PARA GESTIÓN DE MODOS DE FUENTES =====
 
   // Obtener modo actual de una moneda

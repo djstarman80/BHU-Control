@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'dart:html' as html;
 import '../providers/bhu_provider.dart';
 import '../widgets/resumen_tab_widget.dart';
 import '../widgets/depositos_list_tab_widget.dart';
@@ -202,6 +204,31 @@ class _BHUHomePageState extends State<BHUHomePage>
     );
 
     try {
+      if (kIsWeb) {
+        final jsonString = await provider.createBackupWeb();
+        Navigator.of(context).pop();
+
+        final timestamp = DateTime.now().toIso8601String().split('T')[0];
+        final fileName = 'bhu_backup_$timestamp.json';
+
+        final blob = html.Blob([jsonString], 'application/json');
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute('download', fileName)
+          ..click();
+        html.Url.revokeObjectUrl(url);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Backup descargado: $fileName'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        return;
+      }
+
       final file = await provider.createBackup();
       Navigator.of(context).pop();
 

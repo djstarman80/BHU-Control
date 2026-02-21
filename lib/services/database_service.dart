@@ -42,7 +42,7 @@ class DatabaseService {
 
   Future<Database> _initDatabase() async {
     String dbPath;
-    
+
     if (!kIsWeb && io.Platform.isWindows) {
       final appDir = await getApplicationDocumentsDirectory();
       dbPath = p.join(appDir.path, _dbName);
@@ -110,7 +110,8 @@ class DatabaseService {
   Future<int> insertDeposito(Deposito deposito) async {
     final db = await database;
     if (kIsWeb) {
-      return await (db as WebDatabaseImpl).insert(depositosTable, deposito.toMap());
+      return await (db as WebDatabaseImpl)
+          .insert(depositosTable, deposito.toMap());
     }
     return await (db as Database).transaction((txn) async {
       return await txn.insert(depositosTable, deposito.toMap());
@@ -166,7 +167,8 @@ class DatabaseService {
   Future<int> deleteDeposito(int id) async {
     final db = await database;
     if (kIsWeb) {
-      return await (db as WebDatabaseImpl).delete(depositosTable, where: 'id = ?', whereArgs: [id]);
+      return await (db as WebDatabaseImpl)
+          .delete(depositosTable, where: 'id = ?', whereArgs: [id]);
     }
     return await (db as Database).transaction((txn) async {
       return await txn.delete(depositosTable, where: 'id = ?', whereArgs: [id]);
@@ -178,7 +180,8 @@ class DatabaseService {
     if (kIsWeb) {
       return (db as WebDatabaseImpl).query(depositosTable).length;
     }
-    final result = await (db as Database).rawQuery('SELECT COUNT(*) FROM $depositosTable');
+    final result =
+        await (db as Database).rawQuery('SELECT COUNT(*) FROM $depositosTable');
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
@@ -241,7 +244,8 @@ class DatabaseService {
       }
       return total;
     }
-    final result = await (db as Database).rawQuery('SELECT SUM(amount) FROM $depositosTable');
+    final result = await (db as Database)
+        .rawQuery('SELECT SUM(amount) FROM $depositosTable');
     return (result.first.values.first as double?) ?? 0.0;
   }
 
@@ -567,7 +571,9 @@ class DatabaseService {
   // ===== EXPORTAR A CSV =====
 
   Future<io.File> exportToCsv(double currentUiValue) async {
-    if (kIsWeb) throw UnsupportedError('Exportación a CSV no soportada en web mediante File');
+    if (kIsWeb)
+      throw UnsupportedError(
+          'Exportación a CSV no soportada en web mediante File');
     try {
       final depositos = await getAllDepositos();
 
@@ -602,13 +608,16 @@ class DatabaseService {
   // ===== CREAR BACKUP =====
 
   Future<io.File> createBackup() async {
-    if (kIsWeb) throw UnsupportedError('Creación de backup no soportada en web mediante File');
+    if (kIsWeb)
+      throw UnsupportedError(
+          'Creación de backup no soportada en web mediante File');
     try {
       final depositos = await getAllDepositos();
       final config = await getAllConfig();
 
       final backupData = {
-        'ui_actual': double.tryParse(config['current_ui_value'] ?? AppConfig.defaultUiValue.toString()),
+        'ui_actual': double.tryParse(
+            config['current_ui_value'] ?? AppConfig.defaultUiValue.toString()),
         'ui_fuente': config['ui_source'],
         'ui_ultima_actualizacion': config['ui_last_update'],
         'depositos': depositos.map((d) => d.toMap()).toList(),
@@ -628,6 +637,31 @@ class DatabaseService {
       rethrow;
     }
   }
+
+  // ===== CREAR BACKUP WEB (GitHub Pages) =====
+
+  Future<String> createBackupWeb() async {
+    try {
+      final depositos = await getAllDepositos();
+      final config = await getAllConfig();
+
+      final backupData = {
+        'ui_actual': double.tryParse(
+            config['current_ui_value'] ?? AppConfig.defaultUiValue.toString()),
+        'ui_fuente': config['ui_source'],
+        'ui_ultima_actualizacion': config['ui_last_update'],
+        'depositos': depositos.map((d) => d.toMap()).toList(),
+      };
+
+      final jsonString = const JsonEncoder.withIndent('  ').convert(backupData);
+
+      AppLogger.i('Backup web generado');
+      return jsonString;
+    } catch (e) {
+      AppLogger.e('Error creando backup web', e);
+      rethrow;
+    }
+  }
 }
 
 class WebDatabaseImpl {
@@ -642,7 +676,7 @@ class WebDatabaseImpl {
     _initialized = true;
     _tables['depositos'] = [];
     _tables['config'] = [];
-    
+
     _prefs = await SharedPreferences.getInstance();
     await _loadFromStorage();
   }
@@ -652,11 +686,16 @@ class WebDatabaseImpl {
       final data = _prefs?.getString(_storageKey);
       if (data != null && data.isNotEmpty) {
         final Map<String, dynamic> parsed = jsonDecode(data);
-        _tables['depositos'] = List<Map<String, dynamic>>.from(parsed['depositos'] ?? []);
-        _tables['config'] = List<Map<String, dynamic>>.from(parsed['config'] ?? []);
-        
+        _tables['depositos'] =
+            List<Map<String, dynamic>>.from(parsed['depositos'] ?? []);
+        _tables['config'] =
+            List<Map<String, dynamic>>.from(parsed['config'] ?? []);
+
         if (_tables['depositos']!.isNotEmpty) {
-          _nextIdDeposito = _tables['depositos']!.map((e) => e['id'] as int).reduce((a, b) => a > b ? a : b) + 1;
+          _nextIdDeposito = _tables['depositos']!
+                  .map((e) => e['id'] as int)
+                  .reduce((a, b) => a > b ? a : b) +
+              1;
         }
       }
     } catch (e) {
@@ -676,15 +715,16 @@ class WebDatabaseImpl {
     }
   }
 
-  List<Map<String, dynamic>> query(String table, {String? where, List<dynamic>? whereArgs, String? orderBy}) {
+  List<Map<String, dynamic>> query(String table,
+      {String? where, List<dynamic>? whereArgs, String? orderBy}) {
     var results = List<Map<String, dynamic>>.from(_tables[table] ?? []);
-    
+
     if (where != null && whereArgs != null && whereArgs.isNotEmpty) {
       final column = where.split('=')[0].trim().toLowerCase();
       final value = whereArgs[0];
       results = results.where((row) => row[column] == value).toList();
     }
-    
+
     if (orderBy != null) {
       final column = orderBy.split(' ')[0].toLowerCase();
       final descending = orderBy.toLowerCase().contains('desc');
@@ -700,10 +740,11 @@ class WebDatabaseImpl {
     return results;
   }
 
-  Future<int> insert(String table, Map<String, dynamic> values, {ConflictAlgorithm? conflictAlgorithm}) async {
+  Future<int> insert(String table, Map<String, dynamic> values,
+      {ConflictAlgorithm? conflictAlgorithm}) async {
     final normalized = <String, dynamic>{};
     values.forEach((key, value) => normalized[key.toLowerCase()] = value);
-    
+
     if (table == 'config') {
       final key = normalized['key'];
       _tables['config']?.removeWhere((row) => row['key'] == key);
@@ -718,11 +759,12 @@ class WebDatabaseImpl {
     return normalized['id'] ?? 1;
   }
 
-  Future<int> update(String table, Map<String, dynamic> values, {String? where, List<dynamic>? whereArgs}) async {
+  Future<int> update(String table, Map<String, dynamic> values,
+      {String? where, List<dynamic>? whereArgs}) async {
     final column = where?.split('=')[0].trim().toLowerCase();
     final value = whereArgs?[0];
     int count = 0;
-    
+
     for (int i = 0; i < (_tables[table]?.length ?? 0); i++) {
       if (_tables[table]![i][column] == value) {
         values.forEach((k, v) => _tables[table]![i][k.toLowerCase()] = v);
@@ -733,7 +775,8 @@ class WebDatabaseImpl {
     return count;
   }
 
-  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) async {
+  Future<int> delete(String table,
+      {String? where, List<dynamic>? whereArgs}) async {
     final column = where?.split('=')[0].trim().toLowerCase();
     final value = whereArgs?[0];
     final originalLength = _tables[table]?.length ?? 0;
@@ -747,15 +790,24 @@ class WebDatabaseImpl {
 
   Future<void> importData(Map<String, dynamic> data) async {
     _tables['config'] = [
-      if (data['ui_actual'] != null) {'key': 'current_ui_value', 'value': data['ui_actual'].toString()},
-      if (data['ui_fuente'] != null) {'key': 'ui_source', 'value': data['ui_fuente'].toString()},
-      if (data['ui_ultima_actualizacion'] != null) {'key': 'ui_last_update', 'value': data['ui_ultima_actualizacion'].toString()},
+      if (data['ui_actual'] != null)
+        {'key': 'current_ui_value', 'value': data['ui_actual'].toString()},
+      if (data['ui_fuente'] != null)
+        {'key': 'ui_source', 'value': data['ui_fuente'].toString()},
+      if (data['ui_ultima_actualizacion'] != null)
+        {
+          'key': 'ui_last_update',
+          'value': data['ui_ultima_actualizacion'].toString()
+        },
     ];
-    
+
     if (data['depositos'] != null) {
       _tables['depositos'] = List<Map<String, dynamic>>.from(data['depositos']);
       if (_tables['depositos']!.isNotEmpty) {
-        _nextIdDeposito = _tables['depositos']!.map((e) => e['id'] as int).reduce((a, b) => a > b ? a : b) + 1;
+        _nextIdDeposito = _tables['depositos']!
+                .map((e) => e['id'] as int)
+                .reduce((a, b) => a > b ? a : b) +
+            1;
       }
     }
     await _saveToStorage();
