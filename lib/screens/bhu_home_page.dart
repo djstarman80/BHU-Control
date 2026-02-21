@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_saver/file_saver.dart';
 import '../providers/bhu_provider.dart';
 import '../utils/web_download_helper_stub.dart'
     if (dart.library.html) '../utils/web_download_helper.dart';
@@ -76,6 +77,11 @@ class _BHUHomePageState extends State<BHUHomePage>
           icon: const Icon(Icons.file_upload),
           onPressed: () => _exportJson(context),
           tooltip: 'Exportar datos',
+        ),
+        IconButton(
+          icon: const Icon(Icons.picture_as_pdf),
+          onPressed: () => _exportPdf(context),
+          tooltip: 'Exportar PDF',
         ),
         Consumer<BHUProvider>(
           builder: (context, provider, child) {
@@ -239,6 +245,67 @@ class _BHUHomePageState extends State<BHUHomePage>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('❌ Error exportando: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _exportPdf(BuildContext context) async {
+    final provider = context.read<BHUProvider>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Generando PDF...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final bytes = await provider.generatePDFBytes();
+      final fileName =
+          'bhu_resumen_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+      Navigator.of(context).pop();
+
+      if (kIsWeb) {
+        await FileSaver.instance.saveFile(
+          name: fileName.replaceAll('.pdf', ''),
+          bytes: bytes,
+          ext: 'pdf',
+          mimeType: MimeType.pdf,
+        );
+      } else {
+        final file = await provider.generatePDF();
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text:
+              'Resumen BHU - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ PDF exportado: $fileName'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error exportando PDF: $e'),
             backgroundColor: Colors.red,
           ),
         );
