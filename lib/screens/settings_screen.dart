@@ -989,7 +989,6 @@ class SettingsScreen extends StatelessWidget {
     );
 
     try {
-      print('DEBUG: kIsWeb=$kIsWeb, Platform.isWindows=${Platform.isWindows}');
       print('DEBUG SETTINGS - Obteniendo provider...');
       final provider = context.read<BHUProvider>();
 
@@ -998,12 +997,9 @@ class SettingsScreen extends StatelessWidget {
 
       Navigator.of(context).pop();
 
-      if (kIsWeb ||
-          Platform.isWindows ||
-          Platform.isLinux ||
-          Platform.isMacOS) {
-        print('DEBUG: Usando FileSaver (web/desktop)');
-        print('DEBUG SETTINGS - Modo Web/Desktop: guardando archivo...');
+      if (kIsWeb) {
+        print('DEBUG: Usando FileSaver (web)');
+        print('DEBUG SETTINGS - Modo Web: guardando archivo...');
         await FileSaver.instance.saveFile(
           name: fileName,
           bytes: bytes,
@@ -1012,7 +1008,7 @@ class SettingsScreen extends StatelessWidget {
         );
         print('DEBUG SETTINGS - PDF guardado');
       } else {
-        print('DEBUG SETTINGS - Modo Mobile: compartiendo...');
+        print('DEBUG SETTINGS - Modo Desktop/Mobile: compartiendo...');
         final file = await provider.generatePDF();
         await Share.shareXFiles(
           [XFile(file.path)],
