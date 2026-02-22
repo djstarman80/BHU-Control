@@ -311,7 +311,7 @@
                 <button class="btn btn-secondary" onclick="downloadArtifacts()" id="btnDownload" disabled>
                     📥 DESCARGAR
                 </button>
-                <button class="btn btn-success" onclick="createRelease()" id="btnRelease" disabled>
+                <button class="btn btn-success" onclick="createReleaseAction()" id="btnRelease" disabled>
                     📦 CREAR RELEASE
                 </button>
             </div>
@@ -331,7 +331,7 @@
     <script>
         const REPO = "djstarman80/BHU-Control";
         const selectedPlatforms = new Set();
-        let createRelease = false;
+        let shouldCreateRelease = false;
         let generateNotes = false;
         
         // Check for GitHub token in URL
@@ -341,9 +341,10 @@
         if (token) {
             localStorage.setItem('github_token', token);
         } else {
-            document.getElementById('noTokenWarning').style.display = 'block';
+            var warning = document.getElementById('noTokenWarning');
+            if (warning) warning.style.display = 'block';
         }
-        
+
         function togglePlatform(card) {
             const platform = card.dataset.platform;
             if (selectedPlatforms.has(platform)) {
@@ -355,11 +356,13 @@
             }
             console.log('Selected platforms:', Array.from(selectedPlatforms));
         }
-        
+
         function updateOptions() {
-            createRelease = document.getElementById('createRelease').checked;
-            generateNotes = document.getElementById('generateNotes').checked;
-            console.log('Create release:', createRelease);
+            var checkbox = document.getElementById('createRelease');
+            if (checkbox) shouldCreateRelease = checkbox.checked;
+            var notesCheckbox = document.getElementById('generateNotes');
+            if (notesCheckbox) generateNotes = notesCheckbox.checked;
+            console.log('Create release:', shouldCreateRelease);
         }
         
         async function startBuild() {
@@ -402,7 +405,7 @@
                             event_type: 'build-selection',
                             client_payload: {
                                 platforms: Array.from(selectedPlatforms).join(','),
-                                create_release: createRelease,
+                                create_release: shouldCreateRelease,
                                 generate_notes: generateNotes
                             }
                         })
@@ -421,7 +424,7 @@
                         });
                         
                         document.getElementById('btnDownload').disabled = false;
-                        document.getElementById('btnRelease').disabled = !createRelease;
+                        document.getElementById('btnRelease').disabled = !shouldCreateRelease;
                         
                         alert('Build iniciado correctamente en GitHub Actions!');
                         
@@ -505,7 +508,7 @@
             }
         }
         
-        async function createRelease() {
+        async function createReleaseAction() {
             if (!token) {
                 alert('Token de GitHub requerido');
                 return;
