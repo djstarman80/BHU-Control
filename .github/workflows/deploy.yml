@@ -82,6 +82,7 @@ jobs:
         run: flutter build linux --release
 
       - name: Create tarball
+        if: success()
         run: |
           cd build/linux/x64/release
           tar -czf bhu_control_linux.tar.gz bhu_control_app
@@ -113,6 +114,7 @@ jobs:
         run: flutter build macos --release
 
       - name: Create ZIP
+        if: success()
         run: |
           cd build/macos/Build/Products/Release
           zip -r bhu_control_macos.zip "bhu_control_app.app"
@@ -144,6 +146,7 @@ jobs:
         run: flutter build ios --simulator --no-codesign
 
       - name: Create ZIP
+        if: success()
         run: |
           cd build/ios/iphonesimulator
           zip -r bhu_control_ios_simulator.zip Runner.app
@@ -166,18 +169,21 @@ jobs:
     
     steps:
       - name: Download Linux artifact
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: linux-build
           path: ./release
 
       - name: Download macOS artifact
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: macos-build
           path: ./release
 
       - name: Download iOS artifact
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: ios-build
