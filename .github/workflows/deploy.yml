@@ -73,6 +73,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+
       - name: Build Linux
         run: flutter build linux --release
 
@@ -110,7 +115,7 @@ jobs:
       - name: Create ZIP
         run: |
           cd build/macos/Build/Products/Release
-          zip -r bhu_control_macos.zip "BHU Control.app"
+          zip -r bhu_control_macos.zip "bhu_control_app.app"
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
