@@ -12,10 +12,11 @@ on:
 
 jobs:
   # ============================================
-  # Web Build (GitHub Pages)
+  # Web Build (GitHub Pages) - Solo en push a main
   # ============================================
   web:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
       pages: write
@@ -46,6 +47,7 @@ jobs:
   deploy:
     needs: web
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
