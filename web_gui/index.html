@@ -353,14 +353,19 @@
                 selectedPlatforms.add(platform);
                 card.classList.add('selected');
             }
+            console.log('Selected platforms:', Array.from(selectedPlatforms));
         }
         
         function updateOptions() {
             createRelease = document.getElementById('createRelease').checked;
             generateNotes = document.getElementById('generateNotes').checked;
+            console.log('Create release:', createRelease);
         }
         
         async function startBuild() {
+            console.log('Start build clicked');
+            console.log('Selected platforms:', selectedPlatforms.size);
+            
             if (selectedPlatforms.size === 0) {
                 alert('Selecciona al menos una plataforma');
                 return;
@@ -383,6 +388,7 @@
             });
             
             if (token) {
+                console.log('Token found, triggering build...');
                 try {
                     // Trigger workflow dispatch
                     const response = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
@@ -402,7 +408,9 @@
                         })
                     });
                     
-                    if (response.status === 204) {
+                    console.log('Response status:', response.status);
+                    
+                    if (response.status === 204 || response.status === 200) {
                         // Update status
                         const statusItems = statusList.querySelectorAll('.status-item');
                         statusItems.forEach((item, index) => {
@@ -415,19 +423,22 @@
                         document.getElementById('btnDownload').disabled = false;
                         document.getElementById('btnRelease').disabled = !createRelease;
                         
+                        alert('Build iniciado correctamente en GitHub Actions!');
+                        
                         // Open GitHub Actions
                         setTimeout(() => {
                             window.open(`https://github.com/${REPO}/actions`, '_blank');
                         }, 1000);
                     } else {
-                        alert('Error al iniciar build: ' + response.status);
+                        const errorText = await response.text();
+                        alert('Error al iniciar build: ' + response.status + ' - ' + errorText);
                     }
                 } catch (error) {
+                    console.error('Error:', error);
                     alert('Error: ' + error.message);
                 }
             } else {
                 alert('Token de GitHub requerido. Agrega ?token=TU_TOKEN a la URL');
-                window.open(`https://github.com/${REPO}/actions`, '_blank');
             }
         }
         
