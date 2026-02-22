@@ -20,12 +20,12 @@ class PDFGenerator {
 
     final pdf = pw.Document();
     final currencyFormat = NumberFormat.currency(
-      locale: 'es_UY',
+      locale: 'es_ES',
       symbol: '\$',
       decimalDigits: 2,
     );
     final uiFormat = NumberFormat.currency(
-      locale: 'es_UY',
+      locale: 'es_ES',
       symbol: '',
       decimalDigits: 4,
     );
@@ -34,7 +34,7 @@ class PDFGenerator {
     final sortedDepositos = List<Deposito>.from(provider.depositos)
       ..sort(
         (a, b) =>
-            _parseDate(b.depositDate).compareTo(_parseDate(a.depositDate)),
+            _parseDate(a.depositDate).compareTo(_parseDate(b.depositDate)),
       );
 
     print('DEBUG PDFGEN - Depósitos ordenados: ${sortedDepositos.length}');
@@ -45,9 +45,9 @@ class PDFGenerator {
         margin: const pw.EdgeInsets.all(40),
         build: (context) => [
           _buildHeader(pdf, provider, dateFormat, currencyFormat, uiFormat),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 10),
           _buildEstadisticas(provider, currencyFormat, uiFormat),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 10),
           _buildTodosDepositos(provider, currencyFormat, dateFormat, uiFormat),
         ],
       ),
@@ -62,10 +62,12 @@ class PDFGenerator {
   static Future<io.File> generateResumenPDF({
     required BHUProvider provider,
   }) async {
-    if (kIsWeb) throw UnsupportedError('PDF generation using File is not supported on web');
-    
+    if (kIsWeb)
+      throw UnsupportedError(
+          'PDF generation using File is not supported on web');
+
     final bytes = await generateResumenPDFBytes(provider: provider);
-    
+
     print('DEBUG PDFGEN - Guardando PDF en archivo...');
     final file = io.File(
       '${(await io.Directory.systemTemp.createTemp()).path}/bhu_resumen_${DateTime.now().millisecondsSinceEpoch}.pdf',
@@ -325,7 +327,7 @@ class PDFGenerator {
     final sortedDepositos = List<Deposito>.from(provider.depositos)
       ..sort(
         (a, b) =>
-            _parseDate(b.depositDate).compareTo(_parseDate(a.depositDate)),
+            _parseDate(a.depositDate).compareTo(_parseDate(b.depositDate)),
       );
 
     return pw.Column(
@@ -356,12 +358,12 @@ class PDFGenerator {
           pw.Table(
             border: pw.TableBorder.all(color: PdfColors.grey300),
             columnWidths: {
-              0: const pw.FlexColumnWidth(0.4),
-              1: const pw.FlexColumnWidth(1.2),
-              2: const pw.FlexColumnWidth(1.3),
-              3: const pw.FlexColumnWidth(1),
-              4: const pw.FlexColumnWidth(0.7),
-              5: const pw.FlexColumnWidth(1),
+              0: const pw.IntrinsicColumnWidth(),
+              1: const pw.IntrinsicColumnWidth(),
+              2: const pw.IntrinsicColumnWidth(),
+              3: const pw.IntrinsicColumnWidth(),
+              4: const pw.IntrinsicColumnWidth(),
+              5: const pw.IntrinsicColumnWidth(),
             },
             children: [
               pw.TableRow(
@@ -394,11 +396,11 @@ class PDFGenerator {
                     _buildCell(currencyFormat.format(deposito.amount)),
                     _buildCell(uiFormat.format(deposito.uiAmount)),
                     pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
+                      padding: const pw.EdgeInsets.all(4),
                       child: pw.Text(
                         profitText,
                         style: pw.TextStyle(
-                          fontSize: 9,
+                          fontSize: 8,
                           color: profitColor,
                           fontWeight: pw.FontWeight.bold,
                         ),
@@ -428,12 +430,12 @@ class PDFGenerator {
 
   static pw.Widget _buildHeaderCell(String text) {
     return pw.Padding(
-      padding: const pw.EdgeInsets.all(8),
+      padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
         text,
         style: pw.TextStyle(
           fontWeight: pw.FontWeight.bold,
-          fontSize: 9,
+          fontSize: 8,
           color: PdfColors.grey700,
         ),
       ),
@@ -442,8 +444,8 @@ class PDFGenerator {
 
   static pw.Widget _buildCell(String text) {
     return pw.Padding(
-      padding: const pw.EdgeInsets.all(8),
-      child: pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+      padding: const pw.EdgeInsets.all(4),
+      child: pw.Text(text, style: const pw.TextStyle(fontSize: 8), maxLines: 1),
     );
   }
 }

@@ -28,6 +28,9 @@ jobs:
       - name: Build Web
         run: flutter build web --base-href "/BHU-Control/"
 
+      - name: Copy Service Worker
+        run: cp web/sw.js build/web/sw.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
