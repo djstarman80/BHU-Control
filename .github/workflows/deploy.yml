@@ -4,13 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   release:
-    types:
-      - created
-  tag:
     types:
       - created
 
@@ -156,12 +150,12 @@ jobs:
           path: build/ios/iphonesimulator/bhu_control_ios_simulator.zip
 
   # ============================================
-  # Create Release (only on tags)
+  # Create Release (only on release)
   # ============================================
   release:
     needs: [linux, macos, ios]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'release'
     permissions:
       contents: write
     
