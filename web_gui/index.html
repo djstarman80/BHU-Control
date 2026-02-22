@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BHU Control - Build Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2E86C1 0%, #3498DB 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .platform-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .platform-card.selected {
+            border-color: #2E86C1;
+            background: #E3F2FD;
+        }
+        
+        .platform-card .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .platform-card .name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .options {
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .option label {
+            cursor: pointer;
+            color: #333;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: #2E86C1;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a6a9c;
+        }
+        
+        .btn-secondary {
+            background: #3498DB;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #27AE60;
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background: #1e8449;
+        }
+        
+        .status-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .status-area.visible {
+            display: block;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .status-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        
+        .status-pending { background: #FFF3E0; }
+        .status-pending::after { content: "⏳"; }
+        
+        .status-progress { background: #E3F2FD; }
+        .status-progress::after { content: "🔄"; }
+        
+        .status-complete { background: #E8F5E9; }
+        .status-complete::after { content: "✅"; }
+        
+        .status-failed { background: #FFEBEE; }
+        .status-failed::after { content: "❌"; }
+        
+        .artifacts-area {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .artifacts-area.visible {
+            display: block;
+        }
+        
+        .artifact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .artifact-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .artifact-link {
+            color: #2E86C1;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #E3F2FD;
+            border-radius: 5px;
+        }
+        
+        .no-token-warning {
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ BHU Control - Build Manager</h1>
+            <p>Selecciona las plataformas y compila desde GitHub Actions</p>
+        </div>
+        
+        <div class="content">
+            <div id="noTokenWarning" class="no-token-warning" style="display: none;">
+                ⚠️ Token de GitHub no encontrado. Certaines funcionalidades estarán limitadas.
+            </div>
+            
+            <div class="section-title">Seleccionar Plataformas</div>
+            <div class="platforms">
+                <div class="platform-card" data-platform="web" onclick="togglePlatform(this)">
+                    <div class="icon">🌐</div>
+                    <div class="name">Web</div>
+                </div>
+                <div class="platform-card" data-platform="android" onclick="togglePlatform(this)">
+                    <div class="icon">📱</div>
+                    <div class="name">Android</div>
+                </div>
+                <div class="platform-card" data-platform="ios" onclick="togglePlatform(this)">
+                    <div class="icon">📲</div>
+                    <div class="name">iOS</div>
+                </div>
+                <div class="platform-card" data-platform="linux" onclick="togglePlatform(this)">
+                    <div class="icon">🐧</div>
+                    <div class="name">Linux</div>
+                </div>
+                <div class="platform-card" data-platform="macos" onclick="togglePlatform(this)">
+                    <div class="icon">🍎</div>
+                    <div class="name">macOS</div>
+                </div>
+                <div class="platform-card" data-platform="windows" onclick="togglePlatform(this)">
+                    <div class="icon">🪟</div>
+                    <div class="name">Windows</div>
+                </div>
+            </div>
+            
+            <div class="section-title">Opciones Adicionales</div>
+            <div class="options">
+                <div class="option">
+                    <input type="checkbox" id="createRelease" onchange="updateOptions()">
+                    <label for="createRelease">Crear Release automáticamente</label>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="generateNotes" onchange="updateOptions()">
+                    <label for="generateNotes">Generar notas de Release</label>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="startBuild()">
+                    🚀 COMPILAR
+                </button>
+                <button class="btn btn-secondary" onclick="downloadArtifacts()" id="btnDownload" disabled>
+                    📥 DESCARGAR
+                </button>
+                <button class="btn btn-success" onclick="createRelease()" id="btnRelease" disabled>
+                    📦 CREAR RELEASE
+                </button>
+            </div>
+            
+            <div class="status-area" id="statusArea">
+                <div class="section-title">Estado de Compilación</div>
+                <div id="statusList"></div>
+            </div>
+            
+            <div class="artifacts-area" id="artifactsArea">
+                <div class="section-title">Artifacts Disponibles</div>
+                <div id="artifactsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const REPO = "djstarman80/BHU-Control";
+        const selectedPlatforms = new Set();
+        let createRelease = false;
+        let generateNotes = false;
+        
+        // Check for GitHub token in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || localStorage.getItem('github_token');
+        
+        if (token) {
+            localStorage.setItem('github_token', token);
+        } else {
+            document.getElementById('noTokenWarning').style.display = 'block';
+        }
+        
+        function togglePlatform(card) {
+            const platform = card.dataset.platform;
+            if (selectedPlatforms.has(platform)) {
+                selectedPlatforms.delete(platform);
+                card.classList.remove('selected');
+            } else {
+                selectedPlatforms.add(platform);
+                card.classList.add('selected');
+            }
+        }
+        
+        function updateOptions() {
+            createRelease = document.getElementById('createRelease').checked;
+            generateNotes = document.getElementById('generateNotes').checked;
+        }
+        
+        async function startBuild() {
+            if (selectedPlatforms.size === 0) {
+                alert('Selecciona al menos una plataforma');
+                return;
+            }
+            
+            const statusArea = document.getElementById('statusArea');
+            const statusList = document.getElementById('statusList');
+            statusArea.classList.add('visible');
+            statusList.innerHTML = '';
+            
+            // Show status for each selected platform
+            selectedPlatforms.forEach(platform => {
+                const statusItem = document.createElement('div');
+                statusItem.className = 'status-item';
+                statusItem.innerHTML = `
+                    <div class="status-icon status-pending"></div>
+                    <div><strong>${platform.toUpperCase()}</strong> - Pendiente</div>
+                `;
+                statusList.appendChild(statusItem);
+            });
+            
+            if (token) {
+                try {
+                    // Trigger workflow dispatch
+                    const response = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            event_type: 'build-selection',
+                            client_payload: {
+                                platforms: Array.from(selectedPlatforms).join(','),
+                                create_release: createRelease,
+                                generate_notes: generateNotes
+                            }
+                        })
+                    });
+                    
+                    if (response.status === 204) {
+                        // Update status
+                        const statusItems = statusList.querySelectorAll('.status-item');
+                        statusItems.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.querySelector('.status-icon').className = 'status-icon status-complete';
+                                item.innerHTML += ' - Iniciado en GitHub Actions';
+                            }, index * 500);
+                        });
+                        
+                        document.getElementById('btnDownload').disabled = false;
+                        document.getElementById('btnRelease').disabled = !createRelease;
+                        
+                        // Open GitHub Actions
+                        setTimeout(() => {
+                            window.open(`https://github.com/${REPO}/actions`, '_blank');
+                        }, 1000);
+                    } else {
+                        alert('Error al iniciar build: ' + response.status);
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            } else {
+                alert('Token de GitHub requerido. Agrega ?token=TU_TOKEN a la URL');
+                window.open(`https://github.com/${REPO}/actions`, '_blank');
+            }
+        }
+        
+        async function downloadArtifacts() {
+            const artifactsArea = document.getElementById('artifactsArea');
+            const artifactsList = document.getElementById('artifactsList');
+            artifactsArea.classList.add('visible');
+            artifactsList.innerHTML = 'Cargando artifacts...';
+            
+            if (!token) {
+                alert('Token de GitHub requerido');
+                return;
+            }
+            
+            try {
+                // Get latest workflow run
+                const runsResponse = await fetch(`https://api.github.com/repos/${REPO}/actions/runs`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                const runsData = await runsResponse.json();
+                if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
+                    const runId = runsData.workflow_runs[0].id;
+                    
+                    // Get artifacts
+                    const artifactsResponse = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${runId}/artifacts`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    
+                    const artifactsData = await artifactsResponse.json();
+                    
+                    if (artifactsData.artifacts && artifactsData.artifacts.length > 0) {
+                        artifactsList.innerHTML = '';
+                        artifactsData.artifacts.forEach(artifact => {
+                            const sizeMB = (artifact.size / (1024 * 1024)).toFixed(2);
+                            const item = document.createElement('div');
+                            item.className = 'artifact-item';
+                            item.innerHTML = `
+                                <div class="artifact-info">
+                                    <span>📦</span>
+                                    <div>
+                                        <strong>${artifact.name}</strong><br>
+                                        <small>${sizeMB} MB</small>
+                                    </div>
+                                </div>
+                                <a href="${artifact.archive_download_url}" target="_blank" class="artifact-link">Descargar</a>
+                            `;
+                            artifactsList.appendChild(item);
+                        });
+                    } else {
+                        artifactsList.innerHTML = 'No hay artifacts disponibles';
+                    }
+                } else {
+                    artifactsList.innerHTML = 'No hay runs de workflow';
+                }
+            } catch (error) {
+                artifactsList.innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function createRelease() {
+            if (!token) {
+                alert('Token de GitHub requerido');
+                return;
+            }
+            
+            try {
+                const platformsList = Array.from(selectedPlatforms).join(', ');
+                const body = `Release automático generado desde BHU Build Manager
+
+Plataformas compiladas:
+- ${platformsList}
+
+Fecha: ${new Date().toLocaleString()}`;
+                
+                const response = await fetch(`https://api.github.com/repos/${REPO}/releases`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tag_name: `v${new Date().toISOString().slice(0,10).replace(/-/g,'')}`,
+                        name: `BHU Control ${new Date().toISOString().slice(0,10)}`,
+                        body: body,
+                        draft: false,
+                        prerelease: false
+                    })
+                });
+                
+                if (response.status === 201) {
+                    alert('Release creado exitosamente!');
+                    window.open(`https://github.com/${REPO}/releases`, '_blank');
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

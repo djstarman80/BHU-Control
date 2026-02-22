@@ -1,6 +1,11 @@
-name: Build GUI - Web App
+name: Build GUI - Web
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'web_gui/**'
   workflow_dispatch:
 
 jobs:
@@ -14,24 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install flet>=0.21.0
-
-      - name: Build Flet web
-        run: |
-          cd scripts
-          flet build web build_gui.py -o ../build/gui
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./build/gui
+          path: ./web_gui
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
