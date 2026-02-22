@@ -1,0 +1,37 @@
+name: Build GUI - Web App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-gui:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install flet>=0.21.0
+
+      - name: Build Flet web
+        run: |
+          cd scripts
+          flet build web build_gui.py -o ../build/gui
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./build/gui
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
