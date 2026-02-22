@@ -81,28 +81,17 @@ jobs:
       - name: Build Linux
         run: flutter build linux --release
 
-      - name: Debug build output
-        run: |
-          ls -la build/linux/x64/release/ || echo "Release folder not found"
-          ls -la build/linux/ || echo "Linux folder not found"
-
       - name: Create tarball
         if: success()
         run: |
-          ls -la build/linux/x64/release/
-          cd build/linux/x64/release
-          if [ -d "bhu_control_app" ]; then
-            tar -czf bhu_control_linux.tar.gz bhu_control_app
-          else
-            echo "bhu_control_app folder not found, creating empty archive"
-            tar -czf bhu_control_linux.tar.gz -C build/linux/x64/release .
-          fi
+          cd build/linux/x64/release/bundle
+          zip -r ../bhu_control_linux.zip .
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: build/linux/x64/release/bhu_control_linux.tar.gz
+          path: build/linux/x64/release/bhu_control_linux.zip
 
   # ============================================
   # macOS Build
@@ -124,20 +113,11 @@ jobs:
       - name: Build macOS
         run: flutter build macos --release
 
-      - name: Debug macOS build output
-        run: |
-          ls -la build/macos/Build/Products/Release/ || echo "Release folder not found"
-
       - name: Create ZIP
         if: success()
         run: |
           cd build/macos/Build/Products/Release
-          if [ -d "bhu_control_app.app" ]; then
-            zip -r bhu_control_macos.zip "bhu_control_app.app"
-          else
-            echo "bhu_control_app.app not found"
-            zip -r bhu_control_macos.zip .
-          fi
+          zip -r bhu_control_macos.zip .
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
@@ -165,20 +145,11 @@ jobs:
       - name: Build iOS (Simulator)
         run: flutter build ios --simulator --no-codesign
 
-      - name: Debug iOS build output
-        run: |
-          ls -la build/ios/iphonesimulator/ || echo "iphonesimulator folder not found"
-
       - name: Create ZIP
         if: success()
         run: |
           cd build/ios/iphonesimulator
-          if [ -d "Runner.app" ]; then
-            zip -r bhu_control_ios_simulator.zip Runner.app
-          else
-            echo "Runner.app not found"
-            zip -r bhu_control_ios_simulator.zip .
-          fi
+          zip -r bhu_control_ios_simulator.zip .
 
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
