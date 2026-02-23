@@ -108,14 +108,6 @@ jobs:
       - name: Copy Service Worker
         run: cp web/sw.js build/web/sw.js
 
-      - name: Copy GUI to root
-        run: |
-          cp web_gui/index.html build/web/index-gui.html
-          mkdir -p build/web/gui
-          cp web_gui/* build/web/gui/
-          cp web_gui/favicon.ico build/web/
-          cp favicon.ico build/web/
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
