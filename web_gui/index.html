@@ -393,13 +393,15 @@
             
             if (token) {
                 console.log('Token found, triggering build...');
+                console.log('Selected platforms:', Array.from(selectedPlatforms).join(','));
                 try {
-                    // Trigger workflow dispatch
+                    // Trigger repository dispatch
                     const response = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
                         method: 'POST',
                         headers: {
-                            'Authorization': `token ${token}`,
-                            'Accept': 'application/vnd.github.v3+json',
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/vnd.github+json',
+                            'X-GitHub-Api-Version': '2022-11-28',
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
@@ -413,8 +415,11 @@
                     });
                     
                     console.log('Response status:', response.status);
+                    console.log('Response OK:', response.ok);
+                    const responseText = await response.text();
+                    console.log('Response text:', responseText);
                     
-                    if (response.status === 204 || response.status === 200) {
+                    if (response.status === 204 || response.status === 200 || response.ok) {
                         // Update status
                         const statusItems = statusList.querySelectorAll('.status-item');
                         statusItems.forEach((item, index) => {
