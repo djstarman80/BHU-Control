@@ -395,12 +395,14 @@
                 console.log('Token found, triggering build...');
                 console.log('Selected platforms:', Array.from(selectedPlatforms).join(','));
                 
-                // Use workflow dispatch via UI
+                // Build the workflow dispatch URL with pre-selected platforms
                 const platformsStr = Array.from(selectedPlatforms).join(',');
-                alert('Para compilar, por favor:\n\n1. Ve a: https://github.com/djstarman80/BHU-Control/actions\n2. Click en "Run workflow"\n3. Selecciona las plataformas: ' + platformsStr + '\n4. Click en "Run workflow"');
+                const workflowUrl = `https://github.com/djstarman80/BHU-Control/actions/workflows/deploy.yml?editor=true`;
                 
-                // Open actions page
-                window.open('https://github.com/djstarman80/BHU-Control/actions?workflow_dispatch=true', '_blank');
+                alert('Para compilar:\n\n1. Se abrirá GitHub Actions\n2. Click en "Run workflow" (azul)\n3. Ingresa las plataformas: ' + platformsStr + '\n4. Click en "Run workflow"');
+                
+                // Open workflow dispatch page directly
+                window.open(workflowUrl, '_blank');
                 
                 /*
                 // This requires a token with repo scope - alternative is to use workflow_dispatch via URL
