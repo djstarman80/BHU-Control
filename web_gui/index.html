@@ -394,58 +394,34 @@
             if (token) {
                 console.log('Token found, triggering build...');
                 console.log('Selected platforms:', Array.from(selectedPlatforms).join(','));
-                try {
-                    // Trigger repository dispatch
-                    const response = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/vnd.github+json',
-                            'X-GitHub-Api-Version': '2022-11-28',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            event_type: 'build-selection',
-                            client_payload: {
-                                platforms: Array.from(selectedPlatforms).join(','),
-                                create_release: shouldCreateRelease,
-                                generate_notes: generateNotes
-                            }
-                        })
-                    });
-                    
-                    console.log('Response status:', response.status);
-                    console.log('Response OK:', response.ok);
-                    const responseText = await response.text();
-                    console.log('Response text:', responseText);
-                    
-                    if (response.status === 204 || response.status === 200 || response.ok) {
-                        // Update status
-                        const statusItems = statusList.querySelectorAll('.status-item');
-                        statusItems.forEach((item, index) => {
-                            setTimeout(() => {
-                                item.querySelector('.status-icon').className = 'status-icon status-complete';
-                                item.innerHTML += ' - Iniciado en GitHub Actions';
-                            }, index * 500);
-                        });
-                        
-                        document.getElementById('btnDownload').disabled = false;
-                        document.getElementById('btnRelease').disabled = !shouldCreateRelease;
-                        
-                        alert('Build iniciado correctamente en GitHub Actions!');
-                        
-                        // Open GitHub Actions
-                        setTimeout(() => {
-                            window.open(`https://github.com/${REPO}/actions`, '_blank');
-                        }, 1000);
-                    } else {
-                        const errorText = await response.text();
-                        alert('Error al iniciar build: ' + response.status + ' - ' + errorText);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error: ' + error.message);
-                }
+                
+                // Use workflow dispatch via UI
+                const platformsStr = Array.from(selectedPlatforms).join(',');
+                alert('Para compilar, por favor:\n\n1. Ve a: https://github.com/djstarman80/BHU-Control/actions\n2. Click en "Run workflow"\n3. Selecciona las plataformas: ' + platformsStr + '\n4. Click en "Run workflow"');
+                
+                // Open actions page
+                window.open('https://github.com/djstarman80/BHU-Control/actions?workflow_dispatch=true', '_blank');
+                
+                /*
+                // This requires a token with repo scope - alternative is to use workflow_dispatch via URL
+                const response = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        event_type: 'build-selection',
+                        client_payload: {
+                            platforms: platformsStr,
+                            create_release: shouldCreateRelease,
+                            generate_notes: generateNotes
+                        }
+                    })
+                });
+                */
             } else {
                 alert('Token de GitHub requerido. Agrega ?token=TU_TOKEN a la URL');
             }
