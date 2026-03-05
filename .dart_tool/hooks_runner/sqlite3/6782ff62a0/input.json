@@ -1,0 +1,12 @@
+{
+  "assets": {},
+  "config": {
+    "build_asset_types": [],
+    "linking_enabled": true
+  },
+  "out_dir_shared": "C:\\Users\\Usuario\\OneDrive\\Projectos\\bhu_control_app\\.dart_tool\\hooks_runner\\shared\\sqlite3\\build\\",
+  "out_file": "C:\\Users\\Usuario\\OneDrive\\Projectos\\bhu_control_app\\.dart_tool\\hooks_runner\\sqlite3\\6782ff62a0\\output.json",
+  "package_name": "sqlite3",
+  "package_root": "C:\\Users\\Usuario\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\sqlite3-3.1.6\\",
+  "user_defines": {}
+}
