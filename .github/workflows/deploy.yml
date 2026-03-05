@@ -42,11 +42,11 @@ jobs:
           # Default to all platforms for push to main or tags
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "build_web=true" >> $GITHUB_OUTPUT
-            echo "build_android=true" >> $GITHUB_OUTPUT
-            echo "build_linux=true" >> $GITHUB_OUTPUT
-            echo "build_macos=true" >> $GITHUB_OUTPUT
-            echo "build_ios=true" >> $GITHUB_OUTPUT
-            echo "build_windows=true" >> $GITHUB_OUTPUT
+            echo "build_android=false" >> $GITHUB_OUTPUT
+            echo "build_linux=false" >> $GITHUB_OUTPUT
+            echo "build_macos=false" >> $GITHUB_OUTPUT
+            echo "build_ios=false" >> $GITHUB_OUTPUT
+            echo "build_windows=false" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "push" && "${{ startsWith(github.ref, 'refs/tags/') }}" == "true" ]]; then
             echo "build_web=true" >> $GITHUB_OUTPUT
             echo "build_android=true" >> $GITHUB_OUTPUT
