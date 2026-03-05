@@ -37,16 +37,16 @@ dependencies:
   
   # Exportación a CSV/Excel
   csv: ^5.0.0
-  share_plus: ^7.2.2
+  share_plus: ^12.0.1
 
   # PDF
   pdf: ^3.10.4
-  file_saver: ^0.2.14
+  file_saver: ^0.3.1
   
   # Permisos y archivos
   permission_handler: ^11.0.0
-  path_provider: ^2.1.1
-  file_selector: ^1.0.3
+  path_provider: ^2.1.5
+  file_selector: ^1.1.0
 
   # Logging
   logger: ^2.0.2

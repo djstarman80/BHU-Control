@@ -278,9 +278,8 @@ class _BHUHomePageState extends State<BHUHomePage>
 
       if (kIsWeb) {
         await FileSaver.instance.saveFile(
-          name: fileName.replaceAll('.pdf', ''),
+          name: fileName,
           bytes: bytes,
-          ext: 'pdf',
           mimeType: MimeType.pdf,
         );
       } else {

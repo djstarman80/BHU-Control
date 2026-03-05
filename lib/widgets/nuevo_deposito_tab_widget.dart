@@ -142,6 +142,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                     controller: _amountController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (value) => _calculateFromAmount(),
                     decoration: InputDecoration(
                       labelText: 'Monto en pesos (\$)',
                       hintText: '0,00',
@@ -157,10 +158,10 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                       if (value == null || value.isEmpty) {
                         return 'Ingrese el monto';
                       }
-                      if (double.tryParse(value.replaceAll(',', '.')) == null) {
+                      if (_parseInputValue(value) == null) {
                         return 'Ingrese un número válido';
                       }
-                      if (double.tryParse(value.replaceAll(',', '.'))! <= 0) {
+                      if (_parseInputValue(value)! <= 0) {
                         return 'El monto debe ser mayor a 0';
                       }
                       return null;
@@ -173,6 +174,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                     controller: _uiAmountController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (value) => _calculateFromUI(),
                     decoration: InputDecoration(
                       labelText: 'Monto en UI',
                       hintText: '0,0000',
@@ -186,11 +188,10 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                     ),
                     validator: (value) {
                       if (value != null && value.isNotEmpty) {
-                        if (double.tryParse(value.replaceAll(',', '.')) ==
-                            null) {
+                        if (_parseInputValue(value) == null) {
                           return 'Ingrese un número válido';
                         }
-                        if (double.tryParse(value.replaceAll(',', '.'))! <= 0) {
+                        if (_parseInputValue(value)! <= 0) {
                           return 'El monto debe ser mayor a 0';
                         }
                       }
@@ -230,6 +231,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                     controller: _uiValueController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (value) => _calculateFromAmount(),
                     decoration: const InputDecoration(
                       labelText: 'Valor UI del día',
                       hintText: '6,4275',
@@ -240,10 +242,10 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
                       if (value == null || value.isEmpty) {
                         return 'Ingrese el valor UI';
                       }
-                      if (double.tryParse(value.replaceAll(',', '.')) == null) {
+                      if (_parseInputValue(value) == null) {
                         return 'Ingrese un número válido';
                       }
-                      if (double.tryParse(value.replaceAll(',', '.'))! <= 0) {
+                      if (_parseInputValue(value)! <= 0) {
                         return 'El valor debe ser mayor a 0';
                       }
                       return null;
@@ -418,10 +420,10 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
       final provider = context.read<BHUProvider>();
       final deposito = Deposito(
         id: DateTime.now().millisecondsSinceEpoch,
-        amount: double.parse(_amountController.text.replaceAll(',', '.')),
-        uiAmount: double.parse(_uiAmountController.text.replaceAll(',', '.')),
+        amount: _parseInputValue(_amountController.text) ?? 0.0,
+        uiAmount: _parseInputValue(_uiAmountController.text) ?? 0.0,
         depositDate: DateFormatter.formatDisplay(_selectedDate),
-        uiValue: double.parse(_uiValueController.text.replaceAll(',', '.')),
+        uiValue: _parseInputValue(_uiValueController.text) ?? 0.0,
         registrationDate: DateTime.now().toIso8601String(),
       );
 
@@ -471,51 +473,42 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
     HapticFeedback.lightImpact();
   }
 
-  void _validateAndCalculate() {
-    if (_amountController.text.isNotEmpty &&
-        _uiValueController.text.isNotEmpty) {
-      final amount =
-          double.tryParse(_amountController.text.replaceAll(',', '.'));
-      final uiValue =
-          double.tryParse(_uiValueController.text.replaceAll(',', '.'));
+  double? _parseInputValue(String text) {
+    if (text.isEmpty) return null;
+    // Eliminar puntos de miles y reemplazar comas por puntos para el parseo
+    final cleanText = text.replaceAll('.', '').replaceAll(',', '.');
+    return double.tryParse(cleanText);
+  }
 
-      if (amount != null && uiValue != null && uiValue > 0) {
-        final calculatedUI = amount / uiValue;
-        _uiAmountController.text = _formatNumber(calculatedUI, 4);
-        HapticFeedback.selectionClick();
+  void _calculateFromAmount() {
+    final amount = _parseInputValue(_amountController.text);
+    final uiValue = _parseInputValue(_uiValueController.text);
+
+    if (amount != null && uiValue != null && uiValue > 0) {
+      final calculatedUI = amount / uiValue;
+      final formattedUI = _formatNumber(calculatedUI, 4);
+      
+      if (_uiAmountController.text != formattedUI) {
+        _uiAmountController.text = formattedUI;
       }
+    } else if (_amountController.text.isEmpty) {
+      _uiAmountController.clear();
     }
   }
 
   void _calculateFromUI() {
-    if (_uiAmountController.text.isNotEmpty &&
-        _uiValueController.text.isNotEmpty) {
-      final uiAmount =
-          double.tryParse(_uiAmountController.text.replaceAll(',', '.'));
-      final uiValue =
-          double.tryParse(_uiValueController.text.replaceAll(',', '.'));
+    final uiAmount = _parseInputValue(_uiAmountController.text);
+    final uiValue = _parseInputValue(_uiValueController.text);
 
-      if (uiAmount != null && uiValue != null && uiValue > 0) {
-        final calculatedAmount = uiAmount * uiValue;
-        _amountController.text = _formatNumber(calculatedAmount, 2);
-        HapticFeedback.lightImpact();
+    if (uiAmount != null && uiValue != null && uiValue > 0) {
+      final calculatedAmount = uiAmount * uiValue;
+      final formattedAmount = _formatNumber(calculatedAmount, 2);
+      
+      if (_amountController.text != formattedAmount) {
+        _amountController.text = formattedAmount;
       }
-    }
-  }
-
-  void _calculateFromAmount() {
-    if (_amountController.text.isNotEmpty &&
-        _uiValueController.text.isNotEmpty) {
-      final amount =
-          double.tryParse(_amountController.text.replaceAll(',', '.'));
-      final uiValue =
-          double.tryParse(_uiValueController.text.replaceAll(',', '.'));
-
-      if (amount != null && uiValue != null && uiValue > 0) {
-        final calculatedUI = amount / uiValue;
-        _uiAmountController.text = _formatNumber(calculatedUI, 4);
-        HapticFeedback.lightImpact();
-      }
+    } else if (_uiAmountController.text.isEmpty) {
+      _amountController.clear();
     }
   }
 

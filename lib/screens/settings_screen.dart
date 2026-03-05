@@ -1001,9 +1001,8 @@ class SettingsScreen extends StatelessWidget {
         print('DEBUG: Usando FileSaver (web)');
         print('DEBUG SETTINGS - Modo Web: guardando archivo...');
         await FileSaver.instance.saveFile(
-          name: fileName,
+          name: '$fileName.pdf',
           bytes: bytes,
-          ext: 'pdf',
           mimeType: MimeType.pdf,
         );
         print('DEBUG SETTINGS - PDF guardado');
