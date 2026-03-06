@@ -252,12 +252,10 @@ class BHUProvider extends ChangeNotifier {
 
       if (result.success) {
         await loadCurrentUi();
+        await loadMonedaData(); // Sincronizar monedaData
         await loadDepositos();
         _error = null;
         AppLogger.i('UI actualizada: ${_currentUi.value}');
-      } else {
-        _error = result.error ?? 'Error desconocido';
-        AppLogger.w('Error actualizando UI: ${_error}');
       }
     } catch (e) {
       _error = 'Error actualizando UI: ${e.toString()}';
@@ -272,6 +270,7 @@ class BHUProvider extends ChangeNotifier {
     try {
       await UiService.updateUiValueManually(value);
       await loadCurrentUi();
+      await loadMonedaData(); // Sincronizar monedaData
       await loadDepositos();
       _error = null;
       AppLogger.i('UI actualizada manualmente: $value');

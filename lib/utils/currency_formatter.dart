@@ -15,7 +15,7 @@ class CurrencyFormatter {
   }
 
   static String _formatUI(double value) {
-    return value.toStringAsFixed(4).replaceAll('.', ',');
+    return _formatWithThousands(value, 4);
   }
 
   static String _formatUSD(double value) {

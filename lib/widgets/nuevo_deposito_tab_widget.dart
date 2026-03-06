@@ -365,6 +365,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
         setState(() {
           _uiValueController.text =
               _formatNumber(updatedProvider.currentUi.value, 4);
+          _calculateFromAmount(); // Recalcular con el nuevo valor de la UI
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -397,6 +398,7 @@ class _NuevoDepositoTabWidgetState extends State<NuevoDepositoTabWidget> {
     final provider = context.read<BHUProvider>();
     setState(() {
       _uiValueController.text = _formatNumber(provider.monedaData.ui, 4);
+      _calculateFromAmount(); // Recalcular con el nuevo valor de la UI
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
